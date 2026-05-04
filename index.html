@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HCMUT Smart Parking System</title>
+  <meta name="description" content="AIoT-powered automated parking management.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- BACKGROUND -->
+<div id="landing-view">
+  <header class="navbar">
+    <div class="logo"><div class="logo-icon">P</div>Smart Parking</div>
+    <button onclick="showLoginForm()" class="btn btn-primary">Sign In with SSO</button>
+  </header>
+  <main class="hero-section">
+    <div class="hero-badge">AIoT Powered</div>
+    <h1>HCMUT Smart Parking System</h1>
+    <p>Automated parking management with AI-powered license plate recognition, real-time slot monitoring, and seamless cashless payment.</p>
+    <button onclick="showLoginForm()" class="btn btn-primary btn-hero">Get Started &rarr;</button>
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-number">150</span><span class="stat-label">Total Slots</span></div>
+      <div class="stat"><span class="stat-number">24/7</span><span class="stat-label">Monitoring</span></div>
+      <div class="stat"><span class="stat-number">AI</span><span class="stat-label">Recognition</span></div>
+    </div>
+  </main>
+</div>
+
+<!--LOGIN MODAL-->
+<div id="login-view" class="hidden">
+  <div class="modal-overlay" onclick="cancelLogin()"></div>
+  <div class="login-box">
+    <div class="login-header">
+      <div class="login-logo">P</div>
+      <h2>HCMUT SSO Authentication</h2>
+      <p>Sign in with your institutional account</p>
+    </div>
+    <form id="login-form" onsubmit="handleLogin(event)">
+      <div class="input-group">
+        <label for="sso-username">Username / Student ID</label>
+        <input type="text" id="sso-username" placeholder="e.g. 2210001 or admin" required>
+      </div>
+      <div class="input-group">
+        <label for="sso-password">Password</label>
+        <input type="password" id="sso-password" placeholder="Enter your password" required>
+      </div>
+      <div id="login-error" class="login-error hidden">&#x26A0; Invalid username or password.</div>
+      <button type="submit" class="btn btn-primary w-100">Sign In</button>
+      <button type="button" onclick="cancelLogin()" class="btn btn-ghost w-100 mt-10">Cancel</button>
+    </form>
+  </div>
+</div>
+
+<!--ADMIN DASHBOARD -->
+<div id="admin-view" class="hidden">
+  <header class="navbar navbar-admin">
+    <div class="logo"><div class="logo-icon logo-icon-admin">P</div>Smart Parking</div>
+    <div class="navbar-right">
+      <span class="admin-badge">&#x1F6E1; Admin Panel</span>
+      <button onclick="handleLogout()" class="btn btn-danger-outline">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="dashboard-grid">
+
+    <section class="card">
+      <div class="card-header">
+        <h3><span class="card-icon">&#x1F17F;&#xFE0F;</span> Parking Slot Control</h3>
+        <span class="live-badge">&#9679; LIVE</span>
+      </div>
+      <div class="slot-control">
+        <div class="slot-control-display">
+          <div class="slot-big-admin" id="admin-free-display">150</div>
+          <div class="slot-sub-admin">free slots out of 150 total</div>
+        </div>
+        <div class="slot-control-form">
+          <span class="input-label">Set Free Slots (0 – 150)</span>
+          <div class="slot-control-row">
+            <input type="number" id="admin-slot-input" min="0" max="150" value="150" class="slot-input">
+            <button onclick="adminSetSlots()" class="btn btn-primary">Update</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h3><span class="card-icon">&#x1F465;</span> Registered Users</h3>
+        <span class="user-count-badge" id="user-count-badge">0 users</span>
+      </div>
+      <div class="table-wrap">
+        <table class="history-table">
+          <thead>
+            <tr>
+              <th>Username</th><th>Full Name</th><th>Role</th>
+              <th>Plate</th><th>Unpaid Bills</th><th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="admin-users-tbody"></tbody>
+        </table>
+      </div>
+      <div id="no-users-msg" class="empty-msg">No registered users yet. Create one below.</div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h3><span class="card-icon">&#x2795;</span> Create New User Account</h3>
+      </div>
+      <form id="create-user-form" onsubmit="adminCreateUser(event)">
+        <div class="create-user-grid">
+          <div class="input-group">
+            <label for="new-name">Full Name</label>
+            <input type="text" id="new-name" placeholder="e.g. Nguyen Van A" required>
+          </div>
+          <div class="input-group">
+            <label for="new-username">Username (Student / Staff ID)</label>
+            <input type="text" id="new-username" placeholder="e.g. 2210001" required>
+          </div>
+          <div class="input-group">
+            <label for="new-password">Initial Password</label>
+            <input type="password" id="new-password" placeholder="Set a password" required>
+          </div>
+          <div class="input-group">
+            <label for="new-role">Role</label>
+            <select id="new-role" class="select-input">
+              <option value="Student">Student</option>
+              <option value="Staff">Staff</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="new-plate">License Plate</label>
+            <input type="text" id="new-plate" placeholder="e.g. 59-A1 000.00" required>
+          </div>
+        </div>
+        <div id="create-user-msg" class="create-msg hidden"></div>
+        <button type="submit" class="btn btn-primary">Create Account</button>
+      </form>
+    </section>
+
+  </div><!-- /dashboard-grid -->
+</div><!-- /admin-view -->
+
+<!--USER DASHBOARD-->
+<div id="dashboard-view" class="hidden">
+  <header class="navbar">
+    <div class="logo"><div class="logo-icon">P</div>Smart Parking</div>
+    <div class="navbar-right">
+      <div class="user-chip">
+        <div class="user-avatar" id="user-avatar-initials">??</div>
+        <div>
+          <div class="user-name" id="dash-user-name">—</div>
+          <div class="user-role" id="dash-user-role">—</div>
+        </div>
+      </div>
+      <button onclick="handleLogout()" class="btn btn-danger-outline">Sign Out</button>
+    </div>
+  </header>
+
+  <div class="dashboard-grid">
+
+    <section class="card slot-card">
+      <div class="card-header">
+        <h3><span class="card-icon">&#x1F17F;&#xFE0F;</span> Slot Availability</h3>
+        <span class="live-badge">&#9679; LIVE</span>
+      </div>
+      <div class="slot-visual">
+        <div class="slot-ring-wrap">
+          <svg class="slot-svg" viewBox="0 0 120 120">
+            <circle class="ring-bg"   cx="60" cy="60" r="50"/>
+            <circle class="ring-fill" cx="60" cy="60" r="50" id="slot-ring"/>
+          </svg>
+          <div class="slot-center">
+            <span class="slot-big" id="free-slots-count">150</span>
+            <span class="slot-sub">/ 150 Free</span>
+          </div>
+        </div>
+        <div class="slot-stats">
+          <div class="slot-stat"><div class="dot dot-green"></div><div><div class="stat-val" id="free-count">150</div><div class="stat-lbl">Available</div></div></div>
+          <div class="slot-stat"><div class="dot dot-red"></div><div><div class="stat-val" id="occupied-count">0</div><div class="stat-lbl">Occupied</div></div></div>
+          <div class="slot-stat"><div class="dot dot-blue"></div><div><div class="stat-val">150</div><div class="stat-lbl">Total</div></div></div>
+        </div>
+      </div>
+      <div class="slot-status" id="slot-status">
+        <span id="slot-status-text">&#x2705; Plenty of space available</span>
+      </div>
+    </section>
+
+    <section class="card info-card">
+      <div class="card-header">
+        <h3><span class="card-icon">&#x1F464;</span> Vehicle Owner</h3>
+      </div>
+      <div class="info-grid">
+        <div class="info-item"><span class="info-lbl">Full Name</span><span class="info-val" id="info-name">—</span></div>
+        <div class="info-item"><span class="info-lbl">Role</span><span class="info-val" id="info-role">—</span></div>
+        <div class="info-item"><span class="info-lbl">Username</span><span class="info-val" id="info-id">—</span></div>
+        <div class="info-item"><span class="info-lbl">License Plate</span><span class="info-val plate-val" id="info-plate">—</span></div>
+      </div>
+    </section>
+
+    <section class="card billing-card">
+      <div class="card-header">
+        <h3><span class="card-icon">&#x1F4B3;</span> Billing &amp; Payment</h3>
+      </div>
+      <div class="current-bill" id="current-bill">
+        <div class="bill-top">
+          <span class="bill-label">Current Session</span>
+          <span class="badge badge-pending" id="bill-status-badge">&#x23F3; Unpaid</span>
+        </div>
+        <div class="bill-rows">
+          <div class="bill-row"><span>Date</span><span id="bill-date">—</span></div>
+          <div class="bill-row"><span>Check-in</span><span>07:30 AM</span></div>
+          <div class="bill-row"><span>Duration</span><span id="session-duration">Calculating...</span></div>
+          <div class="bill-row bill-total"><span>Amount Due</span><span>4,000 VND</span></div>
+        </div>
+        <button id="btn-pay-now" onclick="handlePayment()" class="btn btn-primary w-100">Pay Now (BKPay)</button>
+      </div>
+
+      <div class="history-section">
+        <h4 class="history-title">Payment History</h4>
+        <div class="table-wrap">
+          <table class="history-table">
+            <thead><tr><th>Date</th><th>In</th><th>Out</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody id="history-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /dashboard-grid -->
+</div><!-- /dashboard-view -->
+
+<!-- SUCCESS TOAST -->
+<div id="success-toast" class="toast hidden">
+  <div class="toast-icon">&#x2705;</div>
+  <div>
+    <div class="toast-title">Payment Successful!</div>
+    <div class="toast-msg">Your bill has been settled via BKPay.</div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
