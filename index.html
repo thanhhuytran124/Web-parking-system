@@ -1,10 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HCMUT Smart Parking System</title>
-  <meta name="description" content="AIoT-powered automated parking management.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,77 +10,68 @@
 </head>
 <body>
 
-<!-- BACKGROUND -->
+<!-- LANDING -->
 <div id="landing-view">
   <header class="navbar">
     <div class="logo"><div class="logo-icon">P</div>Smart Parking</div>
-    <button onclick="showLoginForm()" class="btn btn-primary">Sign In with SSO</button>
+    <button onclick="showLoginForm()" class="btn btn-primary">Đăng nhập SSO</button>
   </header>
   <main class="hero-section">
     <div class="hero-badge">AIoT Powered</div>
     <h1>HCMUT Smart Parking System</h1>
-    <p>Automated parking management with AI-powered license plate recognition, real-time slot monitoring, and seamless cashless payment.</p>
-    <button onclick="showLoginForm()" class="btn btn-primary btn-hero">Get Started &rarr;</button>
+    <p>Quản lý bãi xe tự động với nhận diện biển số AI, giám sát slot thời gian thực và thanh toán không dùng tiền mặt qua BKPay.</p>
+    <button onclick="showLoginForm()" class="btn btn-primary btn-hero">Bắt đầu &rarr;</button>
     <div class="hero-stats">
-      <div class="stat"><span class="stat-number">150</span><span class="stat-label">Total Slots</span></div>
-      <div class="stat"><span class="stat-number">24/7</span><span class="stat-label">Monitoring</span></div>
-      <div class="stat"><span class="stat-number">AI</span><span class="stat-label">Recognition</span></div>
+      <div class="stat"><span class="stat-number">150</span><span class="stat-label">Tổng slot</span></div>
+      <div class="stat"><span class="stat-number">24/7</span><span class="stat-label">Giám sát</span></div>
+      <div class="stat"><span class="stat-number">AI</span><span class="stat-label">Nhận diện</span></div>
     </div>
   </main>
 </div>
 
-<!--LOGIN MODAL-->
+<!-- LOGIN -->
 <div id="login-view" class="hidden">
   <div class="modal-overlay" onclick="cancelLogin()"></div>
   <div class="login-box">
     <div class="login-header">
       <div class="login-logo">P</div>
       <h2>HCMUT SSO Authentication</h2>
-      <p>Sign in with your institutional account</p>
+      <p>Đăng nhập bằng tài khoản trường</p>
     </div>
     <form id="login-form" onsubmit="handleLogin(event)">
-      <div class="input-group">
-        <label for="sso-username">Username / Student ID</label>
-        <input type="text" id="sso-username" placeholder="e.g. 2210001 or admin" required>
-      </div>
-      <div class="input-group">
-        <label for="sso-password">Password</label>
-        <input type="password" id="sso-password" placeholder="Enter your password" required>
-      </div>
-      <div id="login-error" class="login-error hidden">&#x26A0; Invalid username or password.</div>
-      <button type="submit" class="btn btn-primary w-100">Sign In</button>
-      <button type="button" onclick="cancelLogin()" class="btn btn-ghost w-100 mt-10">Cancel</button>
+      <div class="input-group"><label for="sso-username">Tên đăng nhập / MSSV</label><input type="text" id="sso-username" placeholder="vd. 2210001 hoặc admin" required></div>
+      <div class="input-group"><label for="sso-password">Mật khẩu</label><input type="password" id="sso-password" placeholder="Nhập mật khẩu" required></div>
+      <div id="login-error" class="login-error hidden">⚠ Lỗi đăng nhập.</div>
+      <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
+      <button type="button" onclick="cancelLogin()" class="btn btn-ghost w-100 mt-10">Huỷ</button>
     </form>
   </div>
 </div>
 
-<!--ADMIN DASHBOARD -->
+<!-- ADMIN -->
 <div id="admin-view" class="hidden">
   <header class="navbar navbar-admin">
     <div class="logo"><div class="logo-icon logo-icon-admin">P</div>Smart Parking</div>
     <div class="navbar-right">
-      <span class="admin-badge">&#x1F6E1; Admin Panel</span>
-      <button onclick="handleLogout()" class="btn btn-danger-outline">Sign Out</button>
+      <span class="admin-badge">🛡 Admin Panel</span>
+      <button onclick="handleLogout()" class="btn btn-danger-outline">Đăng xuất</button>
     </div>
   </header>
-
   <div class="dashboard-grid">
 
     <section class="card">
-      <div class="card-header">
-        <h3><span class="card-icon">&#x1F17F;&#xFE0F;</span> Parking Slot Control</h3>
-        <span class="live-badge">&#9679; LIVE</span>
-      </div>
+      <div class="card-header"><h3><span class="card-icon">🅿️</span> Điều khiển Slot</h3><span class="live-badge">● LIVE</span></div>
       <div class="slot-control">
         <div class="slot-control-display">
-          <div class="slot-big-admin" id="admin-free-display">150</div>
-          <div class="slot-sub-admin">free slots out of 150 total</div>
+          <div class="slot-big-admin" id="admin-free-display">130</div>
+          <div class="slot-sub-admin">slot trống / tổng 150</div>
         </div>
         <div class="slot-control-form">
-          <span class="input-label">Set Free Slots (0 – 150)</span>
+          <span class="input-label">Đặt số slot trống (0–150)</span>
           <div class="slot-control-row">
-            <input type="number" id="admin-slot-input" min="0" max="150" value="150" class="slot-input">
-            <button onclick="adminSetSlots()" class="btn btn-primary">Update</button>
+            <input type="number" id="admin-slot-input" min="0" max="150" value="130" class="slot-input">
+            <button onclick="adminSetSlots()" class="btn btn-primary">Cập nhật</button>
+            <button onclick="openSlotBoard()" class="btn btn-outline-blue">🗺 Xem bảng</button>
           </div>
         </div>
       </div>
@@ -90,159 +79,213 @@
 
     <section class="card">
       <div class="card-header">
-        <h3><span class="card-icon">&#x1F465;</span> Registered Users</h3>
-        <span class="user-count-badge" id="user-count-badge">0 users</span>
+        <h3><span class="card-icon">👥</span> Người dùng <span class="hint-inline">(nhấn dòng để xem chi tiết)</span></h3>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="month-chip" id="admin-month-label">—</span>
+          <span class="user-count-badge" id="user-count-badge">0 users</span>
+        </div>
       </div>
       <div class="table-wrap">
         <table class="history-table">
-          <thead>
-            <tr>
-              <th>Username</th><th>Full Name</th><th>Role</th>
-              <th>Plate</th><th>Unpaid Bills</th><th>Action</th>
-            </tr>
-          </thead>
+          <thead><tr><th>Tài khoản</th><th>Họ tên</th><th>Vai trò</th><th>Biển số</th><th>Hoá đơn tháng này</th><th>Hành động</th></tr></thead>
           <tbody id="admin-users-tbody"></tbody>
         </table>
       </div>
-      <div id="no-users-msg" class="empty-msg">No registered users yet. Create one below.</div>
+      <div id="no-users-msg" class="empty-msg">Chưa có người dùng nào.</div>
     </section>
 
     <section class="card">
-      <div class="card-header">
-        <h3><span class="card-icon">&#x2795;</span> Create New User Account</h3>
-      </div>
+      <div class="card-header"><h3><span class="card-icon">➕</span> Tạo tài khoản mới</h3></div>
       <form id="create-user-form" onsubmit="adminCreateUser(event)">
         <div class="create-user-grid">
-          <div class="input-group">
-            <label for="new-name">Full Name</label>
-            <input type="text" id="new-name" placeholder="e.g. Nguyen Van A" required>
-          </div>
-          <div class="input-group">
-            <label for="new-username">Username (Student / Staff ID)</label>
-            <input type="text" id="new-username" placeholder="e.g. 2210001" required>
-          </div>
-          <div class="input-group">
-            <label for="new-password">Initial Password</label>
-            <input type="password" id="new-password" placeholder="Set a password" required>
-          </div>
-          <div class="input-group">
-            <label for="new-role">Role</label>
-            <select id="new-role" class="select-input">
-              <option value="Student">Student</option>
-              <option value="Staff">Staff</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label for="new-plate">License Plate</label>
-            <input type="text" id="new-plate" placeholder="e.g. 59-A1 000.00" required>
-          </div>
+          <div class="input-group"><label for="new-name">Họ và tên</label><input type="text" id="new-name" placeholder="vd. Nguyễn Văn A" required></div>
+          <div class="input-group"><label for="new-username">Tên đăng nhập (MSSV/Mã NV)</label><input type="text" id="new-username" placeholder="vd. 2210001" required></div>
+          <div class="input-group"><label for="new-password">Mật khẩu ban đầu</label><input type="password" id="new-password" placeholder="Đặt mật khẩu" required></div>
+          <div class="input-group"><label for="new-dob">Ngày sinh</label><input type="text" id="new-dob" placeholder="vd. 15/08/2002"></div>
+          <div class="input-group"><label for="new-role">Vai trò</label><select id="new-role" class="select-input"><option value="Student">Sinh viên</option><option value="Staff">Nhân viên</option></select></div>
+          <div class="input-group"><label for="new-plate">Biển số xe</label><input type="text" id="new-plate" placeholder="vd. 59-A1 000.00" required></div>
         </div>
         <div id="create-user-msg" class="create-msg hidden"></div>
-        <button type="submit" class="btn btn-primary">Create Account</button>
+        <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
       </form>
     </section>
 
-  </div><!-- /dashboard-grid -->
-</div><!-- /admin-view -->
+  </div>
+</div>
 
-<!--USER DASHBOARD-->
+<!-- USER DASHBOARD -->
 <div id="dashboard-view" class="hidden">
   <header class="navbar">
     <div class="logo"><div class="logo-icon">P</div>Smart Parking</div>
     <div class="navbar-right">
       <div class="user-chip">
         <div class="user-avatar" id="user-avatar-initials">??</div>
-        <div>
-          <div class="user-name" id="dash-user-name">—</div>
-          <div class="user-role" id="dash-user-role">—</div>
-        </div>
+        <div><div class="user-name" id="dash-user-name">—</div><div class="user-role" id="dash-user-role">—</div></div>
       </div>
-      <button onclick="handleLogout()" class="btn btn-danger-outline">Sign Out</button>
+      <button onclick="handleLogout()" class="btn btn-danger-outline">Đăng xuất</button>
     </div>
   </header>
-
   <div class="dashboard-grid">
 
-    <section class="card slot-card">
+    <section class="card slot-card clickable-card" onclick="openSlotBoard()" title="Nhấn để xem bảng chi tiết slot">
       <div class="card-header">
-        <h3><span class="card-icon">&#x1F17F;&#xFE0F;</span> Slot Availability</h3>
-        <span class="live-badge">&#9679; LIVE</span>
+        <h3><span class="card-icon">🅿️</span> Tình trạng chỗ đỗ xe</h3>
+        <div style="display:flex;align-items:center;gap:8px;">
+          <span class="hint-chip">🗺 Chi tiết</span>
+          <span class="live-badge">● LIVE</span>
+        </div>
       </div>
       <div class="slot-visual">
         <div class="slot-ring-wrap">
           <svg class="slot-svg" viewBox="0 0 120 120">
-            <circle class="ring-bg"   cx="60" cy="60" r="50"/>
+            <circle class="ring-bg" cx="60" cy="60" r="50"/>
             <circle class="ring-fill" cx="60" cy="60" r="50" id="slot-ring"/>
           </svg>
-          <div class="slot-center">
-            <span class="slot-big" id="free-slots-count">150</span>
-            <span class="slot-sub">/ 150 Free</span>
-          </div>
+          <div class="slot-center"><span class="slot-big" id="free-slots-count">130</span><span class="slot-sub">/ 150 Trống</span></div>
         </div>
         <div class="slot-stats">
-          <div class="slot-stat"><div class="dot dot-green"></div><div><div class="stat-val" id="free-count">150</div><div class="stat-lbl">Available</div></div></div>
-          <div class="slot-stat"><div class="dot dot-red"></div><div><div class="stat-val" id="occupied-count">0</div><div class="stat-lbl">Occupied</div></div></div>
-          <div class="slot-stat"><div class="dot dot-blue"></div><div><div class="stat-val">150</div><div class="stat-lbl">Total</div></div></div>
+          <div class="slot-stat"><div class="dot dot-green"></div><div><div class="stat-val" id="free-count">130</div><div class="stat-lbl">Còn trống</div></div></div>
+          <div class="slot-stat"><div class="dot dot-red"></div><div><div class="stat-val" id="occupied-count">20</div><div class="stat-lbl">Đang chiếm</div></div></div>
+          <div class="slot-stat"><div class="dot dot-blue"></div><div><div class="stat-val">150</div><div class="stat-lbl">Tổng cộng</div></div></div>
         </div>
       </div>
-      <div class="slot-status" id="slot-status">
-        <span id="slot-status-text">&#x2705; Plenty of space available</span>
-      </div>
+      <div class="slot-status" id="slot-status"><span id="slot-status-text">✅ Còn nhiều chỗ trống</span></div>
     </section>
 
     <section class="card info-card">
-      <div class="card-header">
-        <h3><span class="card-icon">&#x1F464;</span> Vehicle Owner</h3>
-      </div>
+      <div class="card-header"><h3><span class="card-icon">👤</span> Thông tin chủ xe</h3></div>
       <div class="info-grid">
-        <div class="info-item"><span class="info-lbl">Full Name</span><span class="info-val" id="info-name">—</span></div>
-        <div class="info-item"><span class="info-lbl">Role</span><span class="info-val" id="info-role">—</span></div>
-        <div class="info-item"><span class="info-lbl">Username</span><span class="info-val" id="info-id">—</span></div>
-        <div class="info-item"><span class="info-lbl">License Plate</span><span class="info-val plate-val" id="info-plate">—</span></div>
+        <div class="info-item"><span class="info-lbl">Họ tên</span><span class="info-val" id="info-name">—</span></div>
+        <div class="info-item"><span class="info-lbl">Vai trò</span><span class="info-val" id="info-role">—</span></div>
+        <div class="info-item"><span class="info-lbl">Tên đăng nhập</span><span class="info-val" id="info-id">—</span></div>
+        <div class="info-item"><span class="info-lbl">Biển số xe</span><span class="info-val plate-val" id="info-plate">—</span></div>
+      </div>
+    </section>
+
+    <!-- Overdue section -->
+    <section class="card hidden" id="overdue-section">
+      <div class="card-header">
+        <h3><span class="card-icon">⚠️</span> Nợ chưa thanh toán</h3>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="badge badge-warn" id="overdue-count">—</span>
+          <span style="font-weight:800;color:#dc2626;font-size:.95rem;" id="overdue-total">—</span>
+        </div>
+      </div>
+      <p style="font-size:.83rem;color:#64748b;margin-bottom:12px;">💡 Nếu trễ hơn 7 ngày sau khi kết tháng, mỗi hoá đơn phát sinh thêm <strong>10.000 VND</strong> phí trễ hạn. Tài khoản sẽ bị khóa nếu nợ từ <strong>3 tháng</strong> trở lên.</p>
+      <div class="table-wrap">
+        <table class="history-table">
+          <thead><tr><th>Tháng</th><th class="tc">Gốc</th><th class="tc">Phí trễ</th><th class="tc">Tổng phải trả</th><th>Thanh toán</th></tr></thead>
+          <tbody id="overdue-tbody"></tbody>
+        </table>
       </div>
     </section>
 
     <section class="card billing-card">
-      <div class="card-header">
-        <h3><span class="card-icon">&#x1F4B3;</span> Billing &amp; Payment</h3>
-      </div>
-      <div class="current-bill" id="current-bill">
+      <div class="card-header"><h3><span class="card-icon">💳</span> Thanh toán &amp; Hoá đơn</h3></div>
+      <div class="current-bill">
         <div class="bill-top">
-          <span class="bill-label">Current Session</span>
-          <span class="badge badge-pending" id="bill-status-badge">&#x23F3; Unpaid</span>
+          <div><div class="bill-label">Hoá đơn tháng này</div><div class="bill-month" id="bill-month-label">—</div></div>
+          <span class="badge badge-pending" id="bill-status-badge">⏳ Chưa thanh toán</span>
         </div>
         <div class="bill-rows">
-          <div class="bill-row"><span>Date</span><span id="bill-date">—</span></div>
-          <div class="bill-row"><span>Check-in</span><span>07:30 AM</span></div>
-          <div class="bill-row"><span>Duration</span><span id="session-duration">Calculating...</span></div>
-          <div class="bill-row bill-total"><span>Amount Due</span><span>4,000 VND</span></div>
+          <div class="bill-row"><span>Số lần gửi xe</span><span id="bill-session-count">—</span></div>
+          <div class="bill-row bill-total"><span>Tổng tiền (× 2.000đ/lần)</span><span id="bill-amount">—</span></div>
         </div>
-        <button id="btn-pay-now" onclick="handlePayment()" class="btn btn-primary w-100">Pay Now (BKPay)</button>
+        <div class="bill-paid-at" id="bill-paid-at"></div>
+        <button id="btn-pay-now" onclick="handlePayment()" class="btn btn-primary w-100">Thanh toán tháng này (BKPay)</button>
       </div>
-
       <div class="history-section">
-        <h4 class="history-title">Payment History</h4>
+        <h4 class="history-title">Lịch sử thanh toán <span class="hint-inline">(nhấn dòng để xem chi tiết)</span></h4>
         <div class="table-wrap">
           <table class="history-table">
-            <thead><tr><th>Date</th><th>In</th><th>Out</th><th>Amount</th><th>Status</th></tr></thead>
+            <thead><tr><th>Tháng</th><th class="tc">Số lần</th><th class="tc">Số tiền</th><th>Ngày TT</th><th>Trạng thái</th></tr></thead>
             <tbody id="history-tbody"></tbody>
           </table>
         </div>
       </div>
     </section>
 
-  </div><!-- /dashboard-grid -->
-</div><!-- /dashboard-view -->
+  </div>
+</div>
 
-<!-- SUCCESS TOAST -->
+<!-- ═══ MODALS ═══ -->
+
+<!-- SLOT BOARD -->
+<div id="slot-board-modal" class="modal-wrap hidden">
+  <div class="modal-overlay" onclick="closeSlotBoard()"></div>
+  <div class="modal-box modal-wide">
+    <div class="modal-header">
+      <h3>🗺 Bảng điện tử bãi đỗ xe</h3>
+      <button onclick="closeSlotBoard()" class="btn-close">✕</button>
+    </div>
+    <div class="board-legend">
+      <span class="legend-item"><span class="legend-dot ld-green"></span>Trống (<span id="board-free-count">—</span>)</span>
+      <span class="legend-item"><span class="legend-dot ld-red"></span>Đang chiếm (<span id="board-occ-count">—</span>)</span>
+    </div>
+    <div id="slot-board-grid" class="slot-board-grid"></div>
+  </div>
+</div>
+
+<!-- BILL DETAIL -->
+<div id="bill-detail-modal" class="modal-wrap hidden">
+  <div class="modal-overlay" onclick="closeBillDetail()"></div>
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3>📄 Chi tiết hoá đơn — <span id="detail-month-title">—</span></h3>
+      <button onclick="closeBillDetail()" class="btn-close">✕</button>
+    </div>
+    <div class="detail-summary">
+      <div class="detail-sum-item"><span>Tổng số lần gửi</span><strong id="detail-session-count">—</strong></div>
+      <div class="detail-sum-item"><span>Tổng tiền</span><strong id="detail-total-amount">—</strong></div>
+      <div class="detail-sum-item"><span>Trạng thái</span><span id="detail-status" class="badge">—</span></div>
+    </div>
+    <h4 class="detail-sessions-title">Danh sách lần gửi xe</h4>
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead><tr><th>#</th><th>Ngày</th><th>Thời gian (Vào → Ra)</th></tr></thead>
+        <tbody id="detail-sessions-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN USER DETAIL MODAL -->
+<div id="admin-user-modal" class="modal-wrap hidden">
+  <div class="modal-overlay" onclick="closeAdminUserModal()"></div>
+  <div class="modal-box modal-wide">
+    <div class="modal-header">
+      <h3>👤 Chi tiết người dùng</h3>
+      <button onclick="closeAdminUserModal()" class="btn-close">✕</button>
+    </div>
+    <div class="aum-profile">
+      <div class="aum-info-grid">
+        <div class="aum-field"><span class="info-lbl">Họ tên</span><span class="info-val" id="aum-name">—</span></div>
+        <div class="aum-field"><span class="info-lbl">Ngày sinh</span><span class="info-val" id="aum-dob">—</span></div>
+        <div class="aum-field"><span class="info-lbl">Vai trò</span><span class="info-val" id="aum-role">—</span></div>
+        <div class="aum-field"><span class="info-lbl">Biển số xe</span><span class="info-val plate-val" id="aum-plate">—</span></div>
+        <div class="aum-field"><span class="info-lbl">Trạng thái</span><span id="aum-status" class="badge">—</span></div>
+        <div class="aum-field"><span class="info-lbl">Tình trạng nợ</span><span id="aum-overdue" style="font-weight:700;font-size:.9rem;">—</span></div>
+      </div>
+    </div>
+    <h4 class="detail-sessions-title" style="margin-top:20px;">Lịch sử 12 tháng gần nhất</h4>
+    <div class="table-wrap">
+      <table class="history-table">
+        <thead><tr><th>Tháng</th><th class="tc">Số lần</th><th class="tc">Số tiền</th><th>Ngày TT</th><th>Trạng thái</th></tr></thead>
+        <tbody id="aum-history-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
 <div id="success-toast" class="toast hidden">
-  <div class="toast-icon">&#x2705;</div>
+  <div class="toast-icon">✅</div>
   <div>
-    <div class="toast-title">Payment Successful!</div>
-    <div class="toast-msg">Your bill has been settled via BKPay.</div>
+    <div class="toast-title" id="toast-title">Thành công!</div>
+    <div class="toast-msg" id="toast-msg">—</div>
   </div>
 </div>
 
 <script src="script.js"></script>
 </body>
-</html>
+</html> 
