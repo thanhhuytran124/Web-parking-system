@@ -1,291 +1,1164 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HCMUT Smart Parking System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-<!-- LANDING -->
-<div id="landing-view">
-  <header class="navbar">
-    <div class="logo"><div class="logo-icon">P</div>Smart Parking</div>
-    <button onclick="showLoginForm()" class="btn btn-primary">Đăng nhập SSO</button>
-  </header>
-  <main class="hero-section">
-    <div class="hero-badge">AIoT Powered</div>
-    <h1>HCMUT Smart Parking System</h1>
-    <p>Quản lý bãi xe tự động với nhận diện biển số AI, giám sát slot thời gian thực và thanh toán không dùng tiền mặt qua BKPay.</p>
-    <button onclick="showLoginForm()" class="btn btn-primary btn-hero">Bắt đầu &rarr;</button>
-    <div class="hero-stats">
-      <div class="stat"><span class="stat-number">150</span><span class="stat-label">Tổng slot</span></div>
-      <div class="stat"><span class="stat-number">24/7</span><span class="stat-label">Giám sát</span></div>
-      <div class="stat"><span class="stat-number">AI</span><span class="stat-label">Nhận diện</span></div>
-    </div>
-  </main>
-</div>
-
-<!-- LOGIN -->
-<div id="login-view" class="hidden">
-  <div class="modal-overlay" onclick="cancelLogin()"></div>
-  <div class="login-box">
-    <div class="login-header">
-      <div class="login-logo">P</div>
-      <h2>HCMUT SSO Authentication</h2>
-      <p>Đăng nhập bằng tài khoản trường</p>
-    </div>
-    <form id="login-form" onsubmit="handleLogin(event)">
-      <div class="input-group"><label for="sso-username">Tên đăng nhập / MSSV</label><input type="text" id="sso-username" placeholder="vd. 2210001 hoặc admin" required></div>
-      <div class="input-group"><label for="sso-password">Mật khẩu</label><input type="password" id="sso-password" placeholder="Nhập mật khẩu" required></div>
-      <div id="login-error" class="login-error hidden">⚠ Lỗi đăng nhập.</div>
-      <button type="submit" class="btn btn-primary w-100">Đăng nhập</button>
-      <button type="button" onclick="cancelLogin()" class="btn btn-ghost w-100 mt-10">Huỷ</button>
-    </form>
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="admin-view" class="hidden">
-  <header class="navbar navbar-admin">
-    <div class="logo"><div class="logo-icon logo-icon-admin">P</div>Smart Parking</div>
-    <div class="navbar-right">
-      <span class="admin-badge">🛡 Admin Panel</span>
-      <button onclick="handleLogout()" class="btn btn-danger-outline">Đăng xuất</button>
-    </div>
-  </header>
-  <div class="dashboard-grid">
-
-    <section class="card">
-      <div class="card-header"><h3><span class="card-icon">🅿️</span> Điều khiển Slot</h3><span class="live-badge">● LIVE</span></div>
-      <div class="slot-control">
-        <div class="slot-control-display">
-          <div class="slot-big-admin" id="admin-free-display">130</div>
-          <div class="slot-sub-admin">slot trống / tổng 150</div>
+  <!-- LANDING -->
+  <div id="landing-view" class="landing-bg">
+    <header class="navbar">
+      <div class="logo">
+        <div class="logo-icon">P</div><span data-i18n="logoText">Smart Parking</span>
+      </div>
+      <div class="navbar-right" style="display:flex;align-items:center;gap:12px;">
+        <!-- Language Switcher -->
+        <div class="lang-switcher" id="lang-switcher">
+          <button id="lang-vi" class="lang-btn active" onclick="setLang('vi')" title="Tiếng Việt">🇻🇳 VI</button>
+          <button id="lang-en" class="lang-btn" onclick="setLang('en')" title="English">🇬🇧 EN</button>
         </div>
-        <div class="slot-control-form">
-          <span class="input-label">Đặt số slot trống (0–150)</span>
-          <div class="slot-control-row">
-            <input type="number" id="admin-slot-input" min="0" max="150" value="130" class="slot-input">
-            <button onclick="adminSetSlots()" class="btn btn-primary">Cập nhật</button>
-            <button onclick="openSlotBoard()" class="btn btn-outline-blue">🗺 Xem bảng</button>
+        <button onclick="showLoginForm()" class="btn btn-primary" data-i18n="loginBtn">Đăng nhập</button>
+      </div>
+    </header>
+    <main class="hero-section">
+      <h1 data-i18n="heroTitle">Hệ thống Bãi Đỗ Xe Thông Minh HCMUT</h1>
+      <p data-i18n="heroDesc">Quản lý bãi xe tự động với nhận diện biển số AI, giám sát slot thời gian thực và thanh
+        toán không dùng tiền mặt qua BKPay.</p>
+      <button onclick="showLoginForm()" class="btn btn-primary btn-hero" data-i18n="heroStart">Bắt đầu &rarr;</button>
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-number" id="landing-free-slots">--</span><span class="stat-label"
+            data-i18n="available">Còn trống</span></div>
+        <div class="stat"><span class="stat-number">150</span><span class="stat-label" data-i18n="statSlots">Tổng
+            slot</span></div>
+        <div class="stat"><span class="stat-number">24/7</span><span class="stat-label" data-i18n="statMonitor">Giám
+            sát</span></div>
+        <div class="stat"><span class="stat-number">AI</span><span class="stat-label" data-i18n="statAI">Nhận
+            diện</span></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login-view" class="hidden">
+    <div class="modal-overlay" onclick="cancelLogin()"></div>
+    <div class="login-box">
+      <div class="login-header">
+        <div class="login-logo">P</div>
+        <h2>HCMUT SSO Authentication</h2>
+        <p data-i18n="loginSubtitle">Đăng nhập bằng tài khoản trường</p>
+      </div>
+      <form id="login-form" onsubmit="handleLogin(event)">
+        <div class="input-group"><label for="sso-username" data-i18n="labelUsername">Tên đăng nhập / MSSV</label><input
+            type="text" id="sso-username" data-i18n-placeholder="placeholderUsername"
+            placeholder="vd. 2210001 hoặc admin" required></div>
+        <div class="input-group"><label for="sso-password" data-i18n="labelPassword">Mật khẩu</label><input
+            type="password" id="sso-password" data-i18n-placeholder="placeholderPassword" placeholder="Nhập mật khẩu"
+            required></div>
+        <div id="login-error" class="login-error hidden">⚠ <span data-i18n="loginError">Lỗi đăng nhập.</span></div>
+        <button type="submit" class="btn btn-primary w-100" data-i18n="loginSubmit">Đăng nhập</button>
+        <button type="button" onclick="cancelLogin()" class="btn btn-ghost w-100 mt-10"
+          data-i18n="loginCancel">Huỷ</button>
+        <button type="button" onclick="printTempTicket()" class="btn btn-outline-blue w-100 mt-10"
+          data-i18n="printTempTicket">In vé tạm thời</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADMIN SHELL: sidebar + content area -->
+  <!-- Replace the existing #admin-view div entirely with this -->
+  <div id="admin-view" class="hidden">
+    <div class="admin-shell">
+
+      <!-- ── SIDEBAR ── -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+          </div>
+          <span class="sidebar-logo-text">SPS</span>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="sidebar-item active" data-tab="dashboard" onclick="adminSwitchTab('dashboard')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span data-i18n="sidebarDashboard">Dashboard</span>
+          </button>
+          <button class="sidebar-item" data-tab="realtime" onclick="adminSwitchTab('realtime')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83" />
+            </svg>
+            <span data-i18n="sidebarRealtime">Quản lý thời gian thực</span>
+          </button>
+          <button class="sidebar-item" data-tab="monitoring" onclick="adminSwitchTab('monitoring')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+            </svg>
+            <span data-i18n="sidebarMonitoring">Monitoring</span>
+          </button>
+          <button class="sidebar-item" data-tab="history" onclick="adminSwitchTab('history')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span data-i18n="sidebarHistory">Lịch sử đỗ xe</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <button class="sidebar-logout" onclick="handleLogout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span data-i18n="logout">Đăng xuất</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ── MAIN CONTENT ── -->
+      <div class="admin-main">
+
+        <!-- Top header bar -->
+        <header class="admin-topbar">
+          <div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="topbar-title" id="topbar-page-title">Dashboard</div>
+              <button class="btn btn-ghost" style="padding:4px 8px; font-size:0.8rem; border:1px solid var(--border);"
+                onclick="refreshAdminData()" title="Đồng bộ dữ liệu mới">🔄 <span data-i18n="syncData">Đồng
+                  bộ</span></button>
+            </div>
+            <div class="topbar-sub" data-i18n="topbarGreeting">Xin chào, Admin 👋</div>
+          </div>
+          <div class="topbar-right">
+            <button class="topbar-icon-btn" onclick="toggleNotifPanel('admin')" title="Notifications"
+              id="admin-notif-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="topbar-icon-badge hidden" id="admin-notif-badge">0</span>
+            </button>
+            <button class="topbar-icon-btn" onclick="toggleChatPanel('admin')" title="Chat" id="admin-chat-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </button>
+            <div class="topbar-avatar">A</div>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:var(--text)">Admin</div>
+              <div style="font-size:.72rem;color:var(--text-2)" data-i18n="adminRole">Quản trị viên</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- ─── TAB: DASHBOARD ─── -->
+        <div id="tab-dashboard" class="admin-tab-content active">
+
+          <!-- Stat cards row -->
+          <div class="stat-cards">
+            <div class="stat-card stat-card-blue">
+              <div class="stat-card-icon">🅿️</div>
+              <div class="stat-card-val" id="sc-free">130</div>
+              <div class="stat-card-lbl" data-i18n="freeSlots">Slot trống</div>
+            </div>
+            <div class="stat-card stat-card-red">
+              <div class="stat-card-icon">🚗</div>
+              <div class="stat-card-val" id="sc-occ">20</div>
+              <div class="stat-card-lbl" data-i18n="occupied">Đang chiếm</div>
+            </div>
+            <div class="stat-card stat-card-green" style="cursor:pointer" onclick="showUserPopup('all')">
+              <div class="stat-card-icon">👥</div>
+              <div class="stat-card-val" id="sc-users">0</div>
+              <div class="stat-card-lbl" data-i18n="users">Người dùng</div>
+            </div>
+            <div class="stat-card stat-card-amber" style="cursor:pointer" onclick="showUserPopup('overdue')">
+              <div class="stat-card-icon">⚠️</div>
+              <div class="stat-card-val" id="sc-overdue">0</div>
+              <div class="stat-card-lbl" data-i18n="unpaidDebt">Nợ chưa thanh toán</div>
+            </div>
+          </div>
+
+          <!-- Charts row -->
+          <div class="charts-row">
+            <div class="card chart-card">
+              <div class="card-header">
+                <h3>🌡 <span data-i18n="tempLog">Nhật ký nhiệt độ</span></h3><span class="live-badge">● LIVE</span>
+              </div>
+              <canvas id="chart-temp" height="160"></canvas>
+              <div style="font-size:.72rem;color:var(--text-3);margin-top:8px;text-align:center"
+                data-i18n="tempChartSub">Nhiệt độ ghi nhận (Đơn vị: °C)</div>
+            </div>
+            <div class="card chart-card">
+              <div class="card-header">
+                <h3>💧 <span data-i18n="humiLog">Nhật ký độ ẩm</span></h3><span class="live-badge">● LIVE</span>
+              </div>
+              <canvas id="chart-humi" height="160"></canvas>
+              <div style="font-size:.72rem;color:var(--text-3);margin-top:8px;text-align:center"
+                data-i18n="humiChartSub">Độ ẩm ghi nhận (Đơn vị: %)</div>
+            </div>
+          </div>
+
+          <!-- Status cards row -->
+          <div class="status-cards-row">
+            <div class="status-card status-ca-shift">
+              <div class="status-ca-label" data-i18n="currentShift">Ca trực hiện tại</div>
+              <div class="status-ca-avatar">👤</div>
+              <div class="status-ca-name" id="sc-shift-name">Lê Bảo Khánh</div>
+            </div>
+            <div class="status-card status-ca-weather">
+              <div class="status-ca-label" data-i18n="weather">Thời tiết</div>
+              <div style="font-size:2rem">☀️</div>
+              <div style="font-weight:700;font-size:1.1rem" id="sc-temp-now">30°</div>
+              <div style="font-size:.75rem;color:rgba(0,0,0,.5)" data-i18n="sunny">Nắng</div>
+              <div style="font-size:.7rem;color:rgba(0,0,0,.4);margin-top:4px" id="sc-date-now">—</div>
+            </div>
+            <div class="status-card status-ca-humi" onclick="adminSwitchTab('monitoring')" style="cursor:pointer;">
+              <div class="status-ca-label" data-i18n="humidity">Độ ẩm</div>
+              <div style="font-size:1.8rem">🌡</div>
+              <div style="font-weight:800;font-size:1.5rem" id="sc-humi-now">71%</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,.7)" data-i18n="ventToggle">Bật/tắt thông gió</div>
+            </div>
+            <div class="status-card status-ca-light" onclick="adminSwitchTab('monitoring')" style="cursor:pointer;">
+              <div class="status-ca-label" data-i18n="lighting">Đèn chiếu sáng</div>
+              <div style="font-size:1.8rem">💡</div>
+              <div style="font-weight:800;font-size:1.1rem" id="sc-light-status">OK</div>
+              <div style="font-size:.7rem;color:rgba(0,0,0,.4)" data-i18n="lightToggle">Bật/tắt đèn</div>
+            </div>
+          </div>
+
+        </div><!-- /tab-dashboard -->
+
+        <!-- ─── TAB: REAL-TIME ─── -->
+        <div id="tab-realtime" class="admin-tab-content">
+          <div class="tab-inner">
+
+            <div class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">🅿️</span> <span data-i18n="slotControl">Điều khiển Slot</span></h3><span
+                  class="live-badge">● LIVE</span>
+              </div>
+              <div class="slot-control">
+                <div class="slot-control-display">
+                  <div class="slot-big-admin" id="admin-free-display">130</div>
+                  <div class="slot-sub-admin" data-i18n="freeSlotsTotal">slot trống / tổng 150</div>
+                </div>
+                <div class="slot-control-form">
+                  <span class="input-label" data-i18n="setFreeSlots">Đặt số slot trống (0–150)</span>
+                  <div class="slot-control-row">
+                    <input type="number" id="admin-slot-input" min="0" max="150" value="130" class="slot-input">
+                    <button onclick="adminSetSlots()" class="btn btn-primary" data-i18n="updateBtn">Cập nhật</button>
+                    <button onclick="toggleSlotBoard()" class="btn btn-outline-blue">🗺 <span
+                        data-i18n="viewBoardBtn">Xem bảng</span></button>
+                  </div>
+                </div>
+              </div>
+              <div id="inline-slot-board"
+                style="display: none; border-top: 1px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                <div class="board-legend">
+                  <span class="legend-item"><span class="legend-dot ld-green"></span><span
+                      data-i18n="empty">Trống</span> (<span id="board-free-count">—</span>)</span>
+                  <span class="legend-item"><span class="legend-dot ld-red"></span><span data-i18n="occupiedLabel">Đang
+                      chiếm</span> (<span id="board-occ-count">—</span>)</span>
+                </div>
+                <div id="slot-board-grid" class="slot-board-grid"></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">👥</span> <span data-i18n="users">Người dùng</span> <span
+                    class="hint-inline" data-i18n="clickRowHint">(nhấn dòng để xem chi
+                    tiết)</span></h3>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="month-chip" id="admin-month-label">—</span>
+                  <span class="user-count-badge" id="user-count-badge">0 users</span>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th data-i18n="username">Tài khoản</th>
+                      <th data-i18n="fullName">Họ tên</th>
+                      <th data-i18n="role">Vai trò</th>
+                      <th data-i18n="plate">Biển số</th>
+                      <th data-i18n="monthBill">Hoá đơn tháng này</th>
+                      <th data-i18n="action">Hành động</th>
+                    </tr>
+                  </thead>
+                  <tbody id="admin-users-tbody"></tbody>
+                </table>
+              </div>
+              <div id="no-users-msg" class="empty-msg">Chưa có người dùng nào.</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">➕</span> <span data-i18n="createAccountMsg">Tạo tài khoản mới</span></h3>
+              </div>
+              <form id="create-user-form" onsubmit="adminCreateUser(event)">
+                <div class="create-user-grid">
+                  <div class="input-group"><label for="new-name" data-i18n="fullName">Họ và tên</label><input
+                      type="text" id="new-name" placeholder="vd. Nguyễn Văn A" required></div>
+                  <div class="input-group"><label for="new-username" data-i18n="username">Tên đăng nhập (MSSV/Mã
+                      NV)</label><input type="text" id="new-username" placeholder="vd. 2210001" required></div>
+                  <div class="input-group"><label for="new-password" data-i18n="initPassword">Mật khẩu ban
+                      đầu</label><input type="password" id="new-password" placeholder="Đặt mật khẩu" required></div>
+                  <div class="input-group"><label for="new-dob" data-i18n="dob">Ngày sinh</label><input type="text"
+                      id="new-dob" placeholder="vd. 15/08/2002"></div>
+                  <div class="input-group"><label for="new-role" data-i18n="role">Vai trò</label><select id="new-role"
+                      class="select-input">
+                      <option value="Student" data-i18n="student">Sinh viên</option>
+                      <option value="Staff" data-i18n="staff">Nhân viên</option>
+                    </select></div>
+                  <div class="input-group"><label for="new-plate" data-i18n="plate">Biển số xe</label><input type="text"
+                      id="new-plate" placeholder="vd. 59-A1 000.00" required></div>
+                </div>
+                <div id="create-user-msg" class="create-msg hidden"></div>
+                <button type="submit" class="btn btn-primary" data-i18n="createAccountBtn">Tạo tài khoản</button>
+              </form>
+            </div>
+
+          </div>
+        </div><!-- /tab-realtime -->
+
+        <!-- ─── TAB: MONITORING ─── -->
+        <div id="tab-monitoring" class="admin-tab-content">
+          <div class="tab-inner">
+
+            <!-- LIGHT SYSTEM -->
+            <div class="card">
+              <div class="card-header">
+                <h3>💡 <span data-i18n="lightSystem">Hệ thống đèn chiếu sáng</span></h3>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.75rem; border-radius: 6px;"
+                    onclick="toggleAllDevices('light')" data-i18n="toggleAll">Bật/tắt tất cả</button>
+                  <span class="live-badge">● LIVE</span>
+                </div>
+              </div>
+              <div class="device-grid" id="light-grid">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+            <!-- VENTILATION SYSTEM -->
+            <div class="card">
+              <div class="card-header">
+                <h3>🌀 <span data-i18n="ventSystem">Hệ thống thông gió</span></h3>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <button class="btn btn-primary" style="padding: 5px 12px; font-size: 0.75rem; border-radius: 6px;"
+                    onclick="toggleAllDevices('vent')" data-i18n="toggleAll">Bật/tắt tất cả</button>
+                  <span class="live-badge">● LIVE</span>
+                </div>
+              </div>
+              <div class="device-grid" id="vent-grid">
+                <!-- Generated by JS -->
+              </div>
+            </div>
+
+          </div>
+        </div><!-- /tab-monitoring -->
+
+        <!-- ─── TAB: HISTORY ─── -->
+        <div id="tab-history" class="admin-tab-content">
+          <div class="tab-inner">
+
+            <div class="card">
+              <div class="card-header">
+                <h3>📋 <span data-i18n="historyTabTitle">Lịch sử đỗ xe</span></h3>
+                <div style="display:flex;gap:10px;align-items:center;">
+                  <span class="month-chip" id="hist-month-label">—</span>
+                  <select id="hist-filter" class="select-input" style="width:auto;padding:6px 12px;font-size:.82rem;"
+                    onchange="renderParkingHistory()">
+                    <option value="all">Tất cả</option>
+                    <option value="paid">Đã thanh toán</option>
+                    <option value="unpaid">Chưa thanh toán</option>
+                  </select>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 50px;" class="tc">STT</th>
+                      <th>Tài khoản</th>
+                      <th>Họ tên</th>
+                      <th>Tháng</th>
+                      <th class="tc">Số lần</th>
+                      <th class="tc">Số tiền</th>
+                      <th>Trạng thái</th>
+                    </tr>
+                  </thead>
+                  <tbody id="hist-tbody"></tbody>
+                </table>
+              </div>
+              <div class="pagination-controls"
+                style="display:flex; justify-content:center; align-items:center; gap:16px; padding: 12px; border-top: 1px solid var(--border);">
+                <button class="btn btn-ghost" id="hist-btn-prev" onclick="changeHistoryPage(-1)"
+                  data-i18n="prevPage">Trang trước</button>
+                <span id="hist-page-info" style="font-weight:600;font-size:0.85rem;color:var(--text-2);">Trang 1 /
+                  1</span>
+                <button class="btn btn-ghost" id="hist-btn-next" onclick="changeHistoryPage(1)"
+                  data-i18n="nextPage">Trang sau</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3>📊 Thống kê tổng hợp</h3>
+              </div>
+              <div class="info-grid" style="grid-template-columns:repeat(3,1fr);">
+                <div class="info-item"><span class="info-lbl">Tổng lượt gửi xe</span><span class="info-val"
+                    id="hist-total-sessions" style="font-size:1.4rem;color:var(--accent)">—</span></div>
+                <div class="info-item"><span class="info-lbl">Đã thu được</span><span class="info-val"
+                    id="hist-total-paid" style="font-size:1.4rem;color:var(--success)">—</span></div>
+                <div class="info-item"><span class="info-lbl">Còn nợ</span><span class="info-val" id="hist-total-unpaid"
+                    style="font-size:1.4rem;color:var(--danger)">—</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div><!-- /tab-history -->
+
+
+      </div><!-- /admin-main -->
+    </div><!-- /admin-shell -->
+  </div><!-- /admin-view -->
+
+
+  <!-- USER DASHBOARD -->
+  <div id="dashboard-view" class="hidden">
+    <div class="admin-shell">
+
+      <!-- ── STUDENT SIDEBAR ── -->
+      <aside class="sidebar student-sidebar">
+        <div class="sidebar-logo">
+          <div class="sidebar-logo-icon" style="background:linear-gradient(135deg,#2563eb,#7c3aed);">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+          </div>
+          <span class="sidebar-logo-text">SPS</span>
+        </div>
+
+        <!-- Student info chip in sidebar -->
+        <div style="padding:0 16px 16px;text-align:center;">
+          <div class="user-avatar" id="user-avatar-initials"
+            style="width:48px;height:48px;font-size:1.1rem;margin:0 auto 8px;">??</div>
+          <div class="user-name" id="dash-user-name" style="font-size:.9rem;font-weight:700;color:var(--text);">—</div>
+          <div class="user-role" id="dash-user-role" style="font-size:.75rem;color:var(--text-2);">—</div>
+        </div>
+
+        <nav class="sidebar-nav">
+          <button class="sidebar-item active" data-tab="stu-dashboard" onclick="studentSwitchTab('stu-dashboard')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+            <span data-i18n="sidebarDashboard">Bảng điều khiển</span>
+          </button>
+          <button class="sidebar-item" data-tab="stu-profile" onclick="studentSwitchTab('stu-profile')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+            <span data-i18n="stuProfile">Profile cá nhân</span>
+          </button>
+          <button class="sidebar-item" data-tab="stu-parking-history" onclick="studentSwitchTab('stu-parking-history')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            <span data-i18n="stuParkingHistory">Lịch sử đỗ xe</span>
+          </button>
+          <button class="sidebar-item" data-tab="stu-payment" onclick="studentSwitchTab('stu-payment')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2" />
+              <line x1="1" y1="10" x2="23" y2="10" />
+            </svg>
+            <span data-i18n="stuPayment">Lịch sử thanh toán</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <button class="sidebar-logout" onclick="handleLogout()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span data-i18n="logout">Đăng xuất</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- ── STUDENT CONTENT AREA ── -->
+      <div class="admin-main">
+        <header class="admin-topbar">
+          <div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div class="topbar-title" id="stu-topbar-title">B&#7843;ng &#273;i&#7873;u khi&#7875;n</div>
+              <span class="live-badge">&#9679; LIVE</span>
+            </div>
+            <div class="topbar-sub" id="stu-topbar-greeting">Xin ch&#224;o &#128075;</div>
+          </div>
+          <div class="topbar-right">
+            <button class="topbar-icon-btn" onclick="toggleNotifPanel('user')" title="Notifications"
+              id="user-notif-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span class="topbar-icon-badge hidden" id="user-notif-badge">0</span>
+            </button>
+            <button class="topbar-icon-btn" onclick="toggleChatPanel('user')" title="Chat" id="user-chat-btn">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </button>
+            <div class="topbar-avatar" id="stu-topbar-avatar">?</div>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:var(--text)" id="stu-topbar-name">&#8212;</div>
+              <div style="font-size:.72rem;color:var(--text-2)" id="stu-topbar-role">&#8212;</div>
+            </div>
+          </div>
+        </header>
+
+        <!-- TAB: STU-DASHBOARD -->
+        <div id="tab-stu-dashboard" class="admin-tab-content active">
+          <div class="tab-inner">
+
+            <!-- Row 1: Weather + Hours -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+              <div class="card">
+                <div class="card-header">
+                  <h3><span class="card-icon">🌤</span> <span data-i18n="stuWeather">Thời tiết</span></h3>
+                </div>
+                <div style="display:flex;align-items:center;gap:20px;padding:12px 0;">
+                  <div style="font-size:3rem;">☀️</div>
+                  <div>
+                    <div style="font-size:2rem;font-weight:800;color:var(--text);" id="stu-temp">30°C</div>
+                    <div style="color:var(--text-2);font-size:.9rem;" id="stu-weather-desc" data-i18n="sunny">Nắng</div>
+                  </div>
+                </div>
+                <div style="font-size:.85rem;color:var(--text-2);border-top:1px solid var(--border);padding-top:10px;"
+                  id="stu-date-display">—</div>
+              </div>
+              <div class="card">
+                <div class="card-header">
+                  <h3><span class="card-icon">🕐</span> <span data-i18n="stuHours">Giờ hoạt động</span></h3>
+                </div>
+                <div style="padding:12px 0;">
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <span style="font-weight:600;color:var(--text);" data-i18n="stuOpenTime">Mở cửa</span>
+                    <span style="font-weight:800;color:var(--success);font-size:1.1rem;">06:00</span>
+                  </div>
+                  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                    <span style="font-weight:600;color:var(--text);" data-i18n="stuCloseTime">Đóng cửa</span>
+                    <span style="font-weight:800;color:var(--danger);font-size:1.1rem;">22:00</span>
+                  </div>
+                  <div
+                    style="margin-top:8px;padding:8px 14px;border-radius:8px;font-weight:700;font-size:.85rem;text-align:center;"
+                    id="stu-open-status" class="stu-status-open" data-i18n="stuCurrentlyOpen">Hiện tại: Đang mở cửa ✅
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 2: Parking status -->
+            <div class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">🅿️</span> <span data-i18n="parkingStatus">Tình trạng chỗ đỗ xe</span></h3>
+                <span class="live-badge">● LIVE</span>
+              </div>
+              <div class="slot-visual">
+                <div class="slot-ring-wrap">
+                  <svg class="slot-svg" viewBox="0 0 120 120">
+                    <circle class="ring-bg" cx="60" cy="60" r="50" />
+                    <circle class="ring-fill" cx="60" cy="60" r="50" id="slot-ring" />
+                  </svg>
+                  <div class="slot-center"><span class="slot-big" id="free-slots-count">130</span><span
+                      class="slot-sub">/ 150 Trống</span></div>
+                </div>
+                <div class="slot-stats">
+                  <div class="slot-stat">
+                    <div class="dot dot-green"></div>
+                    <div>
+                      <div class="stat-val" id="free-count">130</div>
+                      <div class="stat-lbl" data-i18n="available">Còn trống</div>
+                    </div>
+                  </div>
+                  <div class="slot-stat">
+                    <div class="dot dot-red"></div>
+                    <div>
+                      <div class="stat-val" id="occupied-count">20</div>
+                      <div class="stat-lbl" data-i18n="occupied">Đang chiếm</div>
+                    </div>
+                  </div>
+                  <div class="slot-stat">
+                    <div class="dot dot-blue"></div>
+                    <div>
+                      <div class="stat-val">150</div>
+                      <div class="stat-lbl" data-i18n="total">Tổng cộng</div>
+                    </div>
+                  </div>
+                </div>
+                <div id="available-slots-container"
+                  style="flex:1;height:140px;overflow-y:auto;display:flex;flex-wrap:wrap;gap:6px;align-content:flex-start;padding:4px 12px 4px 0;">
+                </div>
+              </div>
+              <div class="slot-status" id="slot-status"><span id="slot-status-text">✅ Còn nhiều chỗ trống</span></div>
+            </div>
+
+            <!-- Row 3: My parking status -->
+            <div class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">🏍</span> <span data-i18n="stuMyParking">Trạng thái xe của tôi</span></h3>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;padding:12px 0;">
+                <div style="background:rgba(37,99,235,0.06);border-radius:12px;padding:16px;text-align:center;">
+                  <div style="font-size:.8rem;color:var(--text-2);margin-bottom:6px;" data-i18n="plate">Biển số xe</div>
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--accent);letter-spacing:1px;"
+                    id="stu-plate-display">—</div>
+                </div>
+                <div style="background:rgba(22,163,74,0.06);border-radius:12px;padding:16px;text-align:center;">
+                  <div style="font-size:.8rem;color:var(--text-2);margin-bottom:6px;" data-i18n="stuEntryTime">Giờ vào
+                    bãi</div>
+                  <div style="font-size:1.3rem;font-weight:800;color:var(--success);" id="stu-entry-time">—</div>
+                </div>
+              </div>
+              <div style="padding:10px 16px;border-radius:10px;text-align:center;font-weight:700;font-size:.9rem;"
+                id="stu-parking-badge" class="stu-status-open" data-i18n="stuCurrentlyParked">🏍 Xe đang trong bãi</div>
+            </div>
+
           </div>
         </div>
-      </div>
-    </section>
 
-    <section class="card">
-      <div class="card-header">
-        <h3><span class="card-icon">👥</span> Người dùng <span class="hint-inline">(nhấn dòng để xem chi tiết)</span></h3>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="month-chip" id="admin-month-label">—</span>
-          <span class="user-count-badge" id="user-count-badge">0 users</span>
+        <!-- TAB: STU-PROFILE -->
+        <div id="tab-stu-profile" class="admin-tab-content">
+          <div class="tab-inner">
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
+
+              <!-- LEFT: Personal Info -->
+              <div style="display:flex;flex-direction:column;gap:20px;">
+                <!-- Avatar + Name card -->
+                <div class="card" style="padding:24px;">
+                  <div style="display:flex;align-items:center;gap:18px;">
+                    <div class="user-avatar" id="stu-profile-avatar"
+                      style="width:64px;height:64px;font-size:1.5rem;flex-shrink:0;">??</div>
+                    <div>
+                      <div style="font-size:1.2rem;font-weight:800;color:var(--text);" id="stu-profile-name">&mdash;
+                      </div>
+                      <div style="font-size:.85rem;color:var(--text-2);" id="stu-profile-role">&mdash;</div>
+                    </div>
+                  </div>
+                  <div style="margin-top:20px;display:flex;flex-direction:column;gap:14px;">
+                    <div>
+                      <div
+                        style="font-size:.75rem;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;"
+                        data-i18n="stuStudentId">Student ID</div>
+                      <div
+                        style="margin-top:4px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-weight:600;color:var(--text);"
+                        id="profile-student-id">&mdash;</div>
+                    </div>
+                    <div>
+                      <div
+                        style="font-size:.75rem;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;">
+                        Email</div>
+                      <div
+                        style="margin-top:4px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-weight:600;color:var(--text);"
+                        id="profile-email">&mdash;</div>
+                    </div>
+                    <div>
+                      <div
+                        style="font-size:.75rem;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;"
+                        data-i18n="stuPhone">Phone number</div>
+                      <div
+                        style="margin-top:4px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-weight:600;color:var(--text);"
+                        id="profile-phone">&mdash;</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Parking information card -->
+                <div class="card" style="padding:24px;">
+                  <h3 style="color:var(--accent);font-size:1rem;margin-bottom:16px;" data-i18n="stuParkingInfo">
+                    Th&ocirc;ng tin g&#7917;i xe</h3>
+                  <div style="display:flex;flex-direction:column;gap:14px;">
+                    <div>
+                      <div
+                        style="font-size:.75rem;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;"
+                        data-i18n="stuRegCert">Gi&#7845;y &#273;&#259;ng k&yacute; xe</div>
+                      <div
+                        style="margin-top:4px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-weight:600;color:var(--text);"
+                        id="profile-reg-cert">&mdash;</div>
+                    </div>
+                    <div>
+                      <div
+                        style="font-size:.75rem;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;"
+                        data-i18n="stuRegBike">Bi&#7875;n s&#7889; xe &#273;&atilde; &#273;&#259;ng k&yacute;</div>
+                      <div
+                        style="margin-top:4px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-weight:600;color:var(--text);"
+                        id="profile-reg-bike">&mdash;</div>
+                    </div>
+                    <div>
+                      <div
+                        style="font-size:.75rem;font-weight:700;color:var(--text-2);text-transform:uppercase;letter-spacing:.05em;"
+                        data-i18n="stuAccountDue">H&#7841;n t&agrave;i kho&#7843;n</div>
+                      <div
+                        style="margin-top:4px;padding:10px 14px;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;font-weight:600;color:var(--text);"
+                        id="profile-account-due">&mdash;</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- RIGHT: Stats -->
+              <div style="display:flex;flex-direction:column;gap:20px;">
+                <!-- Total parking time -->
+                <div class="card" style="padding:20px;display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:.8rem;color:var(--accent);font-weight:700;" data-i18n="stuTotalTime">
+                      T&#7893;ng th&#7901;i gian g&#7917;i xe (30 ng&agrave;y)</div>
+                    <div style="font-size:1.8rem;font-weight:900;color:var(--text);margin-top:4px;"
+                      id="profile-total-time">97h 23m</div>
+                  </div>
+                  <div
+                    style="width:44px;height:44px;border-radius:50%;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+                    🕐</div>
+                </div>
+
+                <!-- Total use -->
+                <div class="card" style="padding:20px;display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:.8rem;color:var(--accent);font-weight:700;" data-i18n="stuTotalUse">S&#7889;
+                      l&#7847;n g&#7917;i (30 ng&agrave;y)</div>
+                    <div style="font-size:1.8rem;font-weight:900;color:var(--text);margin-top:4px;"
+                      id="profile-total-use">21</div>
+                  </div>
+                  <div
+                    style="width:44px;height:44px;border-radius:50%;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+                    📋</div>
+                </div>
+
+                <!-- Average duration -->
+                <div class="card" style="padding:20px;display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:.8rem;color:var(--accent);font-weight:700;" data-i18n="stuAvgDuration">
+                      Th&#7901;i gian TB m&#7895;i l&#7847;n</div>
+                    <div style="font-size:1.8rem;font-weight:900;color:var(--text);margin-top:4px;"
+                      id="profile-avg-duration">3h 10m</div>
+                  </div>
+                  <div
+                    style="width:44px;height:44px;border-radius:50%;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+                    ⏱</div>
+                </div>
+
+                <!-- Last parking -->
+                <div class="card" style="padding:20px;display:flex;align-items:center;justify-content:space-between;">
+                  <div>
+                    <div style="font-size:.8rem;color:var(--accent);font-weight:700;" data-i18n="stuLastParking">
+                      L&#7847;n g&#7917;i g&#7847;n nh&#7845;t</div>
+                    <div style="font-size:1.2rem;font-weight:900;color:var(--text);margin-top:4px;"
+                      id="profile-last-parking">&mdash;</div>
+                  </div>
+                  <div
+                    style="width:44px;height:44px;border-radius:50%;background:rgba(37,99,235,0.1);display:flex;align-items:center;justify-content:center;font-size:1.3rem;">
+                    🅿️</div>
+                </div>
+
+                <!-- Reporting card -->
+                <div
+                  style="padding:24px;border-radius:16px;background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;">
+                  <h3 style="font-size:1.1rem;font-weight:800;margin-bottom:6px;" data-i18n="stuReporting">Reporting
+                  </h3>
+                  <p style="font-size:.82rem;opacity:.85;margin-bottom:16px;" data-i18n="stuReportDesc">B&#225;o
+                    c&#225;o s&#7921; c&#7889; ho&#7863;c l&#7895;i h&#7879; th&#7889;ng v&#224; theo d&#245;i
+                    tr&#7841;ng th&#225;i b&#225;o c&#225;o.</p>
+                  <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <button onclick="openReportModal()"
+                      style="padding:10px 22px;border:none;border-radius:10px;background:#fff;color:#0e7490;font-weight:800;font-size:.85rem;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.15);transition:transform .15s;"
+                      onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'"
+                      data-i18n="stuNewReport">New Report</button>
+                    <span style="font-size:.78rem;font-style:italic;opacity:.7;" data-i18n="stuNoReport">Ch&#432;a
+                      c&#243; b&#225;o c&#225;o n&#224;o</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: STU-PARKING-HISTORY -->
+        <div id="tab-stu-parking-history" class="admin-tab-content">
+          <div class="tab-inner">
+            <div class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">🕐</span> <span data-i18n="stuParkingHistory">Lịch sử đỗ xe</span></h3>
+              </div>
+              <div class="table-wrap">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th data-i18n="stuDate">Ngày</th>
+                      <th data-i18n="stuCheckIn">Giờ vào</th>
+                      <th data-i18n="stuCheckOut">Giờ ra</th>
+                    </tr>
+                  </thead>
+                  <tbody id="stu-parking-history-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB: STU-PAYMENT -->
+        <div id="tab-stu-payment" class="admin-tab-content">
+          <div class="tab-inner">
+
+            <!-- Overdue section -->
+            <section class="card hidden" id="overdue-section">
+              <div class="card-header">
+                <h3><span class="card-icon">⚠️</span> Nợ chưa thanh toán</h3>
+                <div style="display:flex;align-items:center;gap:10px;">
+                  <span class="badge badge-warn" id="overdue-count">—</span>
+                  <span style="font-weight:800;color:#dc2626;font-size:.95rem;" id="overdue-total">—</span>
+                </div>
+              </div>
+              <p style="font-size:.83rem;color:#64748b;margin-bottom:12px;">💡 Nếu trễ hơn 7 ngày sau khi kết tháng, mỗi
+                hoá
+                đơn phát sinh thêm <strong>10.000 VND</strong> phí trễ hạn. Tài khoản sẽ bị khóa nếu nợ từ <strong>3
+                  tháng</strong> trở lên.</p>
+              <div class="table-wrap">
+                <table class="history-table">
+                  <thead>
+                    <tr>
+                      <th>Tháng</th>
+                      <th class="tc">Gốc</th>
+                      <th class="tc">Phí trễ</th>
+                      <th class="tc">Tổng phải trả</th>
+                      <th>Thanh toán</th>
+                    </tr>
+                  </thead>
+                  <tbody id="overdue-tbody"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="card">
+              <div class="card-header">
+                <h3><span class="card-icon">💳</span> <span data-i18n="billing">Thanh toán & Hoá đơn</span></h3>
+              </div>
+              <div class="current-bill">
+                <div class="bill-top">
+                  <div>
+                    <div class="bill-label" data-i18n="monthBill">Hoá đơn tháng này</div>
+                    <div class="bill-month" id="bill-month-label">—</div>
+                  </div>
+                  <span class="badge badge-pending" id="bill-status-badge">⏳ Chưa thanh toán</span>
+                </div>
+                <div class="bill-rows">
+                  <div class="bill-row"><span>Gói tháng</span><span id="bill-session-count">—</span></div>
+                  <div class="bill-row bill-total"><span>Tổng tiền</span><span id="bill-amount">—</span></div>
+                </div>
+                <div class="bill-paid-at" id="bill-paid-at"></div>
+                <button id="btn-pay-now" onclick="handlePayment()" class="btn btn-primary w-100">Thanh toán tháng này
+                  (BKPay)</button>
+              </div>
+              <div class="history-section">
+                <h4 class="history-title">Lịch sử thanh toán <span class="hint-inline">(nhấn dòng để xem chi
+                    tiết)</span></h4>
+                <div class="table-wrap">
+                  <table class="history-table">
+                    <thead>
+                      <tr>
+                        <th>Tháng</th>
+                        <th class="tc">Số lần</th>
+                        <th class="tc">Số tiền</th>
+                        <th>Ngày TT</th>
+                        <th>Trạng thái</th>
+                      </tr>
+                    </thead>
+                    <tbody id="history-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+      </div><!-- /admin-main -->
+    </div><!-- /admin-shell -->
+  </div><!-- /dashboard-view -->
+
+  <!-- ═══ MODALS ═══ -->
+
+  <!-- REPORT MODAL -->
+  <div id="report-modal" class="modal-wrap hidden">
+    <div class="modal-overlay" onclick="closeReportModal()"></div>
+    <div class="modal-box" style="max-width:440px;">
+      <div class="modal-header">
+        <h3>📝 <span data-i18n="stuNewReport">New Report</span></h3>
+        <button onclick="closeReportModal()" class="btn-close">✕</button>
+      </div>
+
+      <!-- Step 1: Category selection -->
+      <div id="report-step1" style="padding:16px 0;">
+        <p style="font-size:.85rem;color:var(--text-2);margin-bottom:14px;" data-i18n="reportSelectCategory">Ch&#7885;n
+          lo&#7841;i v&#7845;n &#273;&#7873;:</p>
+        <div style="display:flex;flex-direction:column;gap:8px;" id="report-categories">
+          <button class="report-cat-btn" onclick="selectReportCategory(this, 1)">
+            <span>💳</span> <span data-i18n="reportCat1">V&#7845;n &#273;&#7873; thanh to&#225;n</span>
+          </button>
+          <button class="report-cat-btn" onclick="selectReportCategory(this, 2)">
+            <span>🔒</span> <span data-i18n="reportCat2">V&#7845;n &#273;&#7873; an ninh / C&#417; s&#7903; v&#7853;t
+              ch&#7845;t</span>
+          </button>
+          <button class="report-cat-btn" onclick="selectReportCategory(this, 3)">
+            <span>⚙️</span> <span data-i18n="reportCat3">V&#7845;n &#273;&#7873; k&#7929; thu&#7853;t / Thi&#7871;t
+              b&#7883;</span>
+          </button>
+          <button class="report-cat-btn" onclick="selectReportCategory(this, 4)">
+            <span>🪪</span> <span data-i18n="reportCat4">V&#7845;n &#273;&#7873; th&#7867; / T&#224;i kho&#7843;n</span>
+          </button>
+          <button class="report-cat-btn" onclick="selectReportCategory(this, 5)">
+            <span>📌</span> <span data-i18n="reportCat5">Kh&#225;c</span>
+          </button>
         </div>
       </div>
+
+      <!-- Step 2: Description -->
+      <div id="report-step2" class="hidden" style="padding:16px 0;">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+          <button onclick="reportGoBack()"
+            style="border:none;background:none;cursor:pointer;font-size:1.1rem;color:var(--accent);">←</button>
+          <span style="font-weight:700;color:var(--text);" id="report-selected-cat">—</span>
+        </div>
+        <label style="font-size:.85rem;color:var(--text-2);display:block;margin-bottom:6px;"
+          data-i18n="reportDescLabel">M&#244; t&#7843; chi ti&#7871;t v&#7845;n &#273;&#7873;:</label>
+        <textarea id="report-desc" rows="5"
+          style="width:100%;padding:12px;border:1px solid var(--border);border-radius:10px;font-size:.9rem;resize:vertical;font-family:inherit;"
+          placeholder="Nh&#7853;p m&#244; t&#7843;..."></textarea>
+        <button onclick="submitReport()" class="btn btn-primary w-100" style="margin-top:14px;"
+          data-i18n="reportSubmit">G&#7917;i b&#225;o c&#225;o</button>
+      </div>
+
+      <!-- Step 3: Success -->
+      <div id="report-step3" class="hidden" style="padding:30px 0;text-align:center;">
+        <div style="font-size:3rem;margin-bottom:10px;">✅</div>
+        <div style="font-size:1.1rem;font-weight:800;color:var(--text);margin-bottom:6px;" data-i18n="reportSuccess">
+          &#272;&#227; g&#7917;i b&#225;o c&#225;o th&#224;nh c&#244;ng!</div>
+        <p style="font-size:.85rem;color:var(--text-2);margin-bottom:20px;" data-i18n="reportSuccessDesc">Ch&#250;ng
+          t&#244;i s&#7869; ph&#7843;n h&#7891;i trong 24h.</p>
+        <button onclick="closeReportModal()" class="btn btn-primary w-100" data-i18n="closeBtn">&#272;&#243;ng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR CODE MODAL -->
+  <div id="qr-modal" class="modal-wrap hidden">
+    <div class="modal-overlay" onclick="closeQrModal()"></div>
+    <div class="modal-box" style="text-align: center; max-width: 350px;">
+      <div class="modal-header">
+        <h3><span data-i18n="qrModalTitle">Vé điện tử tạm thời</span></h3>
+        <button onclick="closeQrModal()" class="btn-close">✕</button>
+      </div>
+      <div style="padding: 20px 0;">
+        <p style="color: var(--text-2); margin-bottom: 20px; font-size: 0.9rem;" data-i18n="qrModalDesc">Sử dụng mã QR
+          này để quét tại trạm kiểm soát khi ra vào bãi đỗ xe.</p>
+        <img id="qr-image" src="" alt="QR Code"
+          style="width: 200px; height: 200px; border-radius: 8px; box-shadow: var(--shadow);">
+        <p style="margin-top: 15px; font-weight: 700; color: var(--accent); font-size: 1.1rem; letter-spacing: 2px;"
+          id="qr-code-text">GUEST-0000</p>
+      </div>
+      <div style="display: flex; gap: 10px; margin-top: 10px;">
+        <button onclick="downloadQrCode()" class="btn btn-outline-blue w-100" data-i18n="downloadBtn">Tải xuống</button>
+        <button onclick="closeQrModal()" class="btn btn-primary w-100" data-i18n="closeBtn">Đóng</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLOT BOARD REMOVED (Moved inline) -->
+
+  <!-- BILL DETAIL -->
+  <div id="bill-detail-modal" class="modal-wrap hidden">
+    <div class="modal-overlay" onclick="closeBillDetail()"></div>
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>📄 Chi tiết hoá đơn — <span id="detail-month-title">—</span></h3>
+        <button onclick="closeBillDetail()" class="btn-close">✕</button>
+      </div>
+      <div class="detail-summary">
+        <div class="detail-sum-item"><span>Tổng số lần gửi</span><strong id="detail-session-count">—</strong></div>
+        <div class="detail-sum-item"><span>Tổng tiền</span><strong id="detail-total-amount">—</strong></div>
+        <div class="detail-sum-item"><span>Trạng thái</span><span id="detail-status" class="badge">—</span></div>
+      </div>
+      <h4 class="detail-sessions-title">Danh sách lần gửi xe</h4>
       <div class="table-wrap">
         <table class="history-table">
-          <thead><tr><th>Tài khoản</th><th>Họ tên</th><th>Vai trò</th><th>Biển số</th><th>Hoá đơn tháng này</th><th>Hành động</th></tr></thead>
-          <tbody id="admin-users-tbody"></tbody>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Ngày</th>
+              <th>Thời gian (Vào → Ra)</th>
+            </tr>
+          </thead>
+          <tbody id="detail-sessions-tbody"></tbody>
         </table>
       </div>
-      <div id="no-users-msg" class="empty-msg">Chưa có người dùng nào.</div>
-    </section>
-
-    <section class="card">
-      <div class="card-header"><h3><span class="card-icon">➕</span> Tạo tài khoản mới</h3></div>
-      <form id="create-user-form" onsubmit="adminCreateUser(event)">
-        <div class="create-user-grid">
-          <div class="input-group"><label for="new-name">Họ và tên</label><input type="text" id="new-name" placeholder="vd. Nguyễn Văn A" required></div>
-          <div class="input-group"><label for="new-username">Tên đăng nhập (MSSV/Mã NV)</label><input type="text" id="new-username" placeholder="vd. 2210001" required></div>
-          <div class="input-group"><label for="new-password">Mật khẩu ban đầu</label><input type="password" id="new-password" placeholder="Đặt mật khẩu" required></div>
-          <div class="input-group"><label for="new-dob">Ngày sinh</label><input type="text" id="new-dob" placeholder="vd. 15/08/2002"></div>
-          <div class="input-group"><label for="new-role">Vai trò</label><select id="new-role" class="select-input"><option value="Student">Sinh viên</option><option value="Staff">Nhân viên</option></select></div>
-          <div class="input-group"><label for="new-plate">Biển số xe</label><input type="text" id="new-plate" placeholder="vd. 59-A1 000.00" required></div>
-        </div>
-        <div id="create-user-msg" class="create-msg hidden"></div>
-        <button type="submit" class="btn btn-primary">Tạo tài khoản</button>
-      </form>
-    </section>
-
-  </div>
-</div>
-
-<!-- USER DASHBOARD -->
-<div id="dashboard-view" class="hidden">
-  <header class="navbar">
-    <div class="logo"><div class="logo-icon">P</div>Smart Parking</div>
-    <div class="navbar-right">
-      <div class="user-chip">
-        <div class="user-avatar" id="user-avatar-initials">??</div>
-        <div><div class="user-name" id="dash-user-name">—</div><div class="user-role" id="dash-user-role">—</div></div>
-      </div>
-      <button onclick="handleLogout()" class="btn btn-danger-outline">Đăng xuất</button>
     </div>
-  </header>
-  <div class="dashboard-grid">
+  </div>
 
-    <section class="card slot-card clickable-card" onclick="openSlotBoard()" title="Nhấn để xem bảng chi tiết slot">
-      <div class="card-header">
-        <h3><span class="card-icon">🅿️</span> Tình trạng chỗ đỗ xe</h3>
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span class="hint-chip">🗺 Chi tiết</span>
-          <span class="live-badge">● LIVE</span>
+  <!-- ADMIN USER DETAIL MODAL -->
+  <div id="admin-user-modal" class="modal-wrap hidden">
+    <div class="modal-overlay" onclick="closeAdminUserModal()"></div>
+    <div class="modal-box modal-wide">
+      <div class="modal-header">
+        <h3>👤 Chi tiết người dùng</h3>
+        <button onclick="closeAdminUserModal()" class="btn-close">✕</button>
+      </div>
+      <div class="aum-profile">
+        <div class="aum-info-grid">
+          <div class="aum-field"><span class="info-lbl">Họ tên</span><span class="info-val" id="aum-name">—</span></div>
+          <div class="aum-field"><span class="info-lbl">Ngày sinh</span><span class="info-val" id="aum-dob">—</span>
+          </div>
+          <div class="aum-field"><span class="info-lbl">Vai trò</span><span class="info-val" id="aum-role">—</span>
+          </div>
+          <div class="aum-field"><span class="info-lbl">Biển số xe</span><span class="info-val plate-val"
+              id="aum-plate">—</span></div>
+          <div class="aum-field"><span class="info-lbl">Trạng thái</span><span id="aum-status" class="badge">—</span>
+          </div>
+          <div class="aum-field"><span class="info-lbl">Tình trạng nợ</span><span id="aum-overdue"
+              style="font-weight:700;font-size:.9rem;">—</span></div>
         </div>
       </div>
-      <div class="slot-visual">
-        <div class="slot-ring-wrap">
-          <svg class="slot-svg" viewBox="0 0 120 120">
-            <circle class="ring-bg" cx="60" cy="60" r="50"/>
-            <circle class="ring-fill" cx="60" cy="60" r="50" id="slot-ring"/>
-          </svg>
-          <div class="slot-center"><span class="slot-big" id="free-slots-count">130</span><span class="slot-sub">/ 150 Trống</span></div>
-        </div>
-        <div class="slot-stats">
-          <div class="slot-stat"><div class="dot dot-green"></div><div><div class="stat-val" id="free-count">130</div><div class="stat-lbl">Còn trống</div></div></div>
-          <div class="slot-stat"><div class="dot dot-red"></div><div><div class="stat-val" id="occupied-count">20</div><div class="stat-lbl">Đang chiếm</div></div></div>
-          <div class="slot-stat"><div class="dot dot-blue"></div><div><div class="stat-val">150</div><div class="stat-lbl">Tổng cộng</div></div></div>
-        </div>
-      </div>
-      <div class="slot-status" id="slot-status"><span id="slot-status-text">✅ Còn nhiều chỗ trống</span></div>
-    </section>
-
-    <section class="card info-card">
-      <div class="card-header"><h3><span class="card-icon">👤</span> Thông tin chủ xe</h3></div>
-      <div class="info-grid">
-        <div class="info-item"><span class="info-lbl">Họ tên</span><span class="info-val" id="info-name">—</span></div>
-        <div class="info-item"><span class="info-lbl">Vai trò</span><span class="info-val" id="info-role">—</span></div>
-        <div class="info-item"><span class="info-lbl">Tên đăng nhập</span><span class="info-val" id="info-id">—</span></div>
-        <div class="info-item"><span class="info-lbl">Biển số xe</span><span class="info-val plate-val" id="info-plate">—</span></div>
-      </div>
-    </section>
-
-    <!-- Overdue section -->
-    <section class="card hidden" id="overdue-section">
-      <div class="card-header">
-        <h3><span class="card-icon">⚠️</span> Nợ chưa thanh toán</h3>
-        <div style="display:flex;align-items:center;gap:10px;">
-          <span class="badge badge-warn" id="overdue-count">—</span>
-          <span style="font-weight:800;color:#dc2626;font-size:.95rem;" id="overdue-total">—</span>
-        </div>
-      </div>
-      <p style="font-size:.83rem;color:#64748b;margin-bottom:12px;">💡 Nếu trễ hơn 7 ngày sau khi kết tháng, mỗi hoá đơn phát sinh thêm <strong>10.000 VND</strong> phí trễ hạn. Tài khoản sẽ bị khóa nếu nợ từ <strong>3 tháng</strong> trở lên.</p>
+      <h4 class="detail-sessions-title" style="margin-top:20px;">Lịch sử 12 tháng gần nhất</h4>
       <div class="table-wrap">
         <table class="history-table">
-          <thead><tr><th>Tháng</th><th class="tc">Gốc</th><th class="tc">Phí trễ</th><th class="tc">Tổng phải trả</th><th>Thanh toán</th></tr></thead>
-          <tbody id="overdue-tbody"></tbody>
+          <thead>
+            <tr>
+              <th>Tháng</th>
+              <th class="tc">Số lần</th>
+              <th class="tc">Số tiền</th>
+              <th>Ngày TT</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody id="aum-history-tbody"></tbody>
         </table>
       </div>
-    </section>
+    </div>
+  </div>
 
-    <section class="card billing-card">
-      <div class="card-header"><h3><span class="card-icon">💳</span> Thanh toán &amp; Hoá đơn</h3></div>
-      <div class="current-bill">
-        <div class="bill-top">
-          <div><div class="bill-label">Hoá đơn tháng này</div><div class="bill-month" id="bill-month-label">—</div></div>
-          <span class="badge badge-pending" id="bill-status-badge">⏳ Chưa thanh toán</span>
-        </div>
-        <div class="bill-rows">
-          <div class="bill-row"><span>Số lần gửi xe</span><span id="bill-session-count">—</span></div>
-          <div class="bill-row bill-total"><span>Tổng tiền (× 2.000đ/lần)</span><span id="bill-amount">—</span></div>
-        </div>
-        <div class="bill-paid-at" id="bill-paid-at"></div>
-        <button id="btn-pay-now" onclick="handlePayment()" class="btn btn-primary w-100">Thanh toán tháng này (BKPay)</button>
+  <!-- TOAST -->
+  <div id="success-toast" class="toast hidden">
+    <div class="toast-icon">✅</div>
+    <div>
+      <div class="toast-title" id="toast-title">Thành công!</div>
+      <div class="toast-msg" id="toast-msg">—</div>
+    </div>
+  </div>
+
+  <!-- Admin Users List Modal -->
+  <div id="admin-users-list-modal" class="modal-wrap hidden">
+    <div class="modal-overlay" onclick="closeUserPopup()"></div>
+    <div class="modal-box modal-wide">
+      <div class="modal-header">
+        <h3 id="popup-users-title">Danh sách</h3>
+        <button class="btn-close" onclick="closeUserPopup()">✕</button>
       </div>
-      <div class="history-section">
-        <h4 class="history-title">Lịch sử thanh toán <span class="hint-inline">(nhấn dòng để xem chi tiết)</span></h4>
-        <div class="table-wrap">
-          <table class="history-table">
-            <thead><tr><th>Tháng</th><th class="tc">Số lần</th><th class="tc">Số tiền</th><th>Ngày TT</th><th>Trạng thái</th></tr></thead>
-            <tbody id="history-tbody"></tbody>
-          </table>
-        </div>
-      </div>
-    </section>
-
-  </div>
-</div>
-
-<!-- ═══ MODALS ═══ -->
-
-<!-- SLOT BOARD -->
-<div id="slot-board-modal" class="modal-wrap hidden">
-  <div class="modal-overlay" onclick="closeSlotBoard()"></div>
-  <div class="modal-box modal-wide">
-    <div class="modal-header">
-      <h3>🗺 Bảng điện tử bãi đỗ xe</h3>
-      <button onclick="closeSlotBoard()" class="btn-close">✕</button>
-    </div>
-    <div class="board-legend">
-      <span class="legend-item"><span class="legend-dot ld-green"></span>Trống (<span id="board-free-count">—</span>)</span>
-      <span class="legend-item"><span class="legend-dot ld-red"></span>Đang chiếm (<span id="board-occ-count">—</span>)</span>
-    </div>
-    <div id="slot-board-grid" class="slot-board-grid"></div>
-  </div>
-</div>
-
-<!-- BILL DETAIL -->
-<div id="bill-detail-modal" class="modal-wrap hidden">
-  <div class="modal-overlay" onclick="closeBillDetail()"></div>
-  <div class="modal-box">
-    <div class="modal-header">
-      <h3>📄 Chi tiết hoá đơn — <span id="detail-month-title">—</span></h3>
-      <button onclick="closeBillDetail()" class="btn-close">✕</button>
-    </div>
-    <div class="detail-summary">
-      <div class="detail-sum-item"><span>Tổng số lần gửi</span><strong id="detail-session-count">—</strong></div>
-      <div class="detail-sum-item"><span>Tổng tiền</span><strong id="detail-total-amount">—</strong></div>
-      <div class="detail-sum-item"><span>Trạng thái</span><span id="detail-status" class="badge">—</span></div>
-    </div>
-    <h4 class="detail-sessions-title">Danh sách lần gửi xe</h4>
-    <div class="table-wrap">
-      <table class="history-table">
-        <thead><tr><th>#</th><th>Ngày</th><th>Thời gian (Vào → Ra)</th></tr></thead>
-        <tbody id="detail-sessions-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-</div>
-
-<!-- ADMIN USER DETAIL MODAL -->
-<div id="admin-user-modal" class="modal-wrap hidden">
-  <div class="modal-overlay" onclick="closeAdminUserModal()"></div>
-  <div class="modal-box modal-wide">
-    <div class="modal-header">
-      <h3>👤 Chi tiết người dùng</h3>
-      <button onclick="closeAdminUserModal()" class="btn-close">✕</button>
-    </div>
-    <div class="aum-profile">
-      <div class="aum-info-grid">
-        <div class="aum-field"><span class="info-lbl">Họ tên</span><span class="info-val" id="aum-name">—</span></div>
-        <div class="aum-field"><span class="info-lbl">Ngày sinh</span><span class="info-val" id="aum-dob">—</span></div>
-        <div class="aum-field"><span class="info-lbl">Vai trò</span><span class="info-val" id="aum-role">—</span></div>
-        <div class="aum-field"><span class="info-lbl">Biển số xe</span><span class="info-val plate-val" id="aum-plate">—</span></div>
-        <div class="aum-field"><span class="info-lbl">Trạng thái</span><span id="aum-status" class="badge">—</span></div>
-        <div class="aum-field"><span class="info-lbl">Tình trạng nợ</span><span id="aum-overdue" style="font-weight:700;font-size:.9rem;">—</span></div>
+      <div class="table-wrap" style="max-height: 400px; overflow-y: auto;">
+        <table class="history-table" style="width: 100%;">
+          <thead>
+            <tr>
+              <th style="text-align: left;">Tài khoản</th>
+              <th style="text-align: left;">Họ tên</th>
+              <th style="text-align: left;" id="popup-col-3">Nợ chưa thanh toán</th>
+            </tr>
+          </thead>
+          <tbody id="popup-users-tbody"></tbody>
+        </table>
       </div>
     </div>
-    <h4 class="detail-sessions-title" style="margin-top:20px;">Lịch sử 12 tháng gần nhất</h4>
-    <div class="table-wrap">
-      <table class="history-table">
-        <thead><tr><th>Tháng</th><th class="tc">Số lần</th><th class="tc">Số tiền</th><th>Ngày TT</th><th>Trạng thái</th></tr></thead>
-        <tbody id="aum-history-tbody"></tbody>
-      </table>
+  </div>
+
+  <!-- ═══ FLOATING NOTIFICATION PANEL ═══ -->
+  <div id="notif-panel" class="floating-panel hidden">
+    <div class="fp-header">
+      <span>🔔</span>
+      <h4 data-i18n="stuNotifications">Thông báo</h4>
+      <button class="btn-close" onclick="closeAllPanels()">✕</button>
+    </div>
+    <div id="notif-panel-list" class="fp-body">
+      <div class="fp-empty" data-i18n="stuNoNotif">Không có thông báo mới</div>
     </div>
   </div>
-</div>
 
-<!-- TOAST -->
-<div id="success-toast" class="toast hidden">
-  <div class="toast-icon">✅</div>
-  <div>
-    <div class="toast-title" id="toast-title">Thành công!</div>
-    <div class="toast-msg" id="toast-msg">—</div>
+  <!-- ═══ FLOATING CHAT PANEL ═══ -->
+  <div id="chat-panel" class="floating-panel hidden" style="width:340px;">
+    <div class="fp-header">
+      <span>💬</span>
+      <h4 id="chat-panel-title" data-i18n="stuChat">Chat</h4>
+      <button class="btn-close" onclick="closeAllPanels()">✕</button>
+    </div>
+    <div id="chat-panel-messages" class="fp-body" style="height:320px;">
+    </div>
+    <div class="fp-footer">
+      <input type="text" id="fp-chat-input" placeholder="Nhập tin nhắn..."
+        onkeydown="if(event.key==='Enter')sendFloatingChat()">
+      <button onclick="sendFloatingChat()" data-i18n="stuSend">Gửi</button>
+    </div>
   </div>
-</div>
 
-<script src="script.js"></script>
+  <!-- Click-outside overlay -->
+  <div id="panel-overlay" class="hidden" onclick="closeAllPanels()" style="position:fixed;inset:0;z-index:998;"></div>
+
+  <script src="script.js"></script>
 </body>
-</html> 
+
+</html>
