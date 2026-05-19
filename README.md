@@ -58,20 +58,20 @@ The system integrates several key components:
 
 ## ✅ Functional Requirements
 
-| ID | Nhóm | Mô tả |
+| ID | Category | Description |
 |----|------|-------|
-| FR1 | Access Control | Cho phép thành viên trường vào bãi xe bằng thẻ định danh chính thức |
-| FR2 | Authentication | Xác thực qua HCMUT_SSO; đồng bộ thông tin từ HCMUT_DATACORE (read-only) |
-| FR3 | Visitor | Phát hành vé tạm thời cho khách vãng lai hoặc người không mang thẻ |
-| FR4 | Monitoring | Phát hiện trạng thái có/trống của từng chỗ đậu qua cảm biến IoT |
-| FR5 | Monitoring | Tính toán số chỗ trống toàn bãi theo thời gian thực |
-| FR6 | Guidance | Hiển thị trạng thái bãi xe (còn chỗ / gần đầy / hết chỗ) trên bảng LED |
-| FR7 | Guidance | Chỉ dẫn hướng đến khu đỗ xe thay thế |
-| FR8 | Billing | Tính phí gửi xe cho sinh viên theo chu kỳ thanh toán định kỳ |
-| FR9 | Payment | Khởi tạo yêu cầu thanh toán qua nền tảng BKPay |
-| FR10 | Billing | Tính phí gửi xe cho khách vãng lai |
-| FR11 | Administration | Cho phép admin cấu hình chính sách giá và quyền gửi xe |
-| FR12 | Logging | Ghi nhật ký toàn bộ hoạt động gửi xe và giao dịch tài chính |
+| FR1 | Access Control | Allows university members to enter the parking lot using their official identification cards |
+| FR2 | Authentication | Authenticates via HCMUT_SSO; synchronizes information from HCMUT_DATACORE (read-only) |
+| FR3 | Visitor | Issues temporary tickets for casual visitors or individuals without cards |
+| FR4 | Monitoring | Detects the occupied/vacant status of each parking slot via IoT sensors |
+| FR5 | Monitoring | Calculates the number of available slots across the entire parking lot in real time |
+| FR6 | Guidance | Displays the parking lot status (Available / Near Full / Full) on LED boards |
+| FR7 | Guidance | Provides directional guidance to alternative parking areas |
+| FR8 | Billing | Calculates parking fees for students based on periodic billing cycles |
+| FR9 | Payment | Initiates payment requests via the BKPay platform |
+| FR10 | Billing | Calculates parking fees for casual visitors |
+| FR11 | Administration | Allows administrators to configure pricing policies and parking privileges |
+| FR12 | Logging | Logs all parking activities and financial transactions |
 
 ---
 
@@ -79,28 +79,28 @@ The system integrates several key components:
 
 | Category | Requirement |
 |---|---|
-| **Performance** | Hệ thống phản hồi yêu cầu ra/vào trong vòng ≤ 2 giây |
-| **Availability** | Uptime ≥ 99% trong giờ hoạt động |
-| **Reliability** | Tiếp tục vận hành khi một cảm biến bị hỏng |
-| **Security** | Phân quyền RBAC cho tất cả chức năng quản trị |
-| **Scalability** | Hỗ trợ ít nhất 5.000 người dùng đồng thời |
-| **Data Integrity** | Toàn bộ giao dịch được ghi log và không thể chỉnh sửa trái phép |
-| **Fault Tolerance** | Chịu lỗi khi IoT gateway mất kết nối hoặc dữ liệu cảm biến bị trễ |
+| **Performance** | The system responds to entry/exit requests within ≤ 2 seconds |
+| **Availability** | Uptime ≥ 99% during operational hours |
+| **Reliability** | Continues to operate even if a single sensor fails |
+| **Security** | Role-Based Access Control (RBAC) for all administrative functions |
+| **Scalability** | Supports at least 5,000 concurrent users |
+| **Data Integrity** | All transactions are logged and cannot be altered without authorization |
+| **Fault Tolerance** | Tolerates faults when the IoT gateway loses connection or sensor data is delayed |
 
 ---
 
 ## 👤 Actors & Stakeholders
 
-| Actor | Mô tả |
+| Actor | Description |
 |---|---|
-| **University Member** | Sinh viên, học viên cao học, NCS, giảng viên, cán bộ — dùng thẻ ID để ra/vào |
-| **Visitor** | Khách vãng lai, dùng vé tạm thời |
-| **Parking Operator** | Nhân viên vận hành cổng bãi xe, xử lý các trường hợp ngoại lệ |
-| **System Administrator** | Cấu hình giá, quản lý vai trò, xem báo cáo và log |
-| **HCMUT_SSO** | Hệ thống xác thực của trường |
-| **HCMUT_DATACORE** | Cơ sở dữ liệu người dùng trường (read-only) |
-| **BKPay** | Nền tảng thanh toán nội bộ của HCMUT |
-| **IoT Gateway** | Cổng thu thập dữ liệu cảm biến từ các chỗ đậu |
+| **University Member** | Students, graduate students, PhD candidates, lecturers, staff — use ID cards for entry/exit |
+| **Visitor** | Casual visitors, use temporary tickets |
+| **Parking Operator** | Gate operations staff, handles exceptional cases |
+| **System Administrator** | Configures pricing, manages user roles, views reports and logs |
+| **HCMUT_SSO** | University central authentication system |
+| **HCMUT_DATACORE** | University user database (read-only) |
+| **BKPay** | HCMUT internal payment platform |
+| **IoT Gateway** | Sensor data collection gateway from parking slots |
 
 ---
 
@@ -108,17 +108,17 @@ The system integrates several key components:
 
 ### Nhóm chính
 
-| Use Case | Actor | Mô tả |
+| Use Case | Actor | Description |
 |---|---|---|
-| Enter Parking Area | Member / Visitor / Operator | Vào bãi xe qua thẻ ID hoặc vé tạm |
-| Exit Parking Area | Member / Visitor / Operator | Ra bãi xe, kết thúc phiên gửi xe |
-| Monitor Parking Availability | Operator / IoT Gateway | Xem trạng thái chỗ đậu real-time |
-| Display Parking Guidance | Member / Visitor | Xem hướng dẫn và chỗ trống trên bảng LED |
-| Pay Parking Fee | Member / BKPay | Thanh toán phí qua BKPay |
-| Configure Pricing Policy | Admin | Cấu hình quy tắc tính phí |
-| Manage User Roles | Admin / HCMUT_DATACORE | Phân quyền người dùng |
-| View Logs and Reports | Admin / Operator | Xem lịch sử hoạt động và báo cáo |
-| Handle Lost Card | Operator | Xử lý trường hợp mất thẻ |
+| Enter Parking Area | Member / Visitor / Operator | Enter the parking area via ID card or temporary ticket |
+| Exit Parking Area | Member / Visitor / Operator | Exit the parking area, ending the parking session |
+| Monitor Parking Availability | Operator / IoT Gateway | View real-time parking slot status |
+| Display Parking Guidance | Member / Visitor | View guidance and available slots on LED boards |
+| Pay Parking Fee | Member / BKPay | Pay parking fees via BKPay |
+| Configure Pricing Policy | Admin | Configure fee calculation rules |
+| Manage User Roles | Admin / HCMUT_DATACORE | Manage user permissions and roles |
+| View Logs and Reports | Admin / Operator | View activity history and generated reports |
+| Handle Lost Card | Operator | Handle exceptional cases involving lost cards |
 
 ---
 
@@ -126,15 +126,15 @@ The system integrates several key components:
 
 ```
 Web-parking-system/
-├── index.html              # Trang chủ / Entry point
+├── index.html             
 ├── src/
-│   ├── pages/              # Các trang giao diện
-│   ├── components/         # Các component UI tái sử dụng
-│   ├── assets/             # Hình ảnh, icons
-│   └── data/               # Dữ liệu hard-coded (mock data)
+│   ├── pages/              
+│   ├── components/        
+│   ├── assets/            
+│   └── data/            
 ├── docs/
-│   ├── diagrams/           # Sơ đồ use case, sequence, class...
-│   └── report/             # Báo cáo các submission
+│   ├── diagrams/           
+│   └── report/           
 └── README.md
 ```
 
@@ -152,34 +152,20 @@ Web-parking-system/
 # Clone repo
 git clone https://github.com/thanhhuytran124/Web-parking-system.git
 
-# Vào thư mục
 cd Web-parking-system
 
-# Mở file index.html bằng trình duyệt
-# Hoặc dùng Live Server nếu dùng VS Code
 ```
 
 ---
 
 ## 📄 Submissions
 
-| # | Nội dung | Trạng thái |
+| # | Content | Status |
 |---|---|---|
 | Submission 1 | Functional/Non-functional Requirements + Use-case Diagram | ✅ Completed |
 | Submission 2 | Sequence Diagrams + Activity Diagrams + UI Mockup | ✅ Completed |
 | Submission 3 | Architecture + Class Diagram + Method Descriptions | ✅ Completed |
-| Final | Tổng hợp tất cả + Demo + AI Disclosure | 🔄 In Progress |
-
----
-
-## 🤖 Generative AI Usage Disclosure
-
-Trong quá trình thực hiện bài tập lớn, nhóm có sử dụng các công cụ AI hỗ trợ như:
-
-- **Claude (Anthropic)** — Hỗ trợ tìm ý tưởng, gợi ý cấu trúc tài liệu, review diagram
-- **ChatGPT (OpenAI)** — Hỗ trợ tra cứu thuật ngữ, kiểm tra nội dung tiếng Anh
-
-Toàn bộ nội dung đã được nhóm đọc hiểu, phân tích và chỉnh sửa để phù hợp với yêu cầu bài. Nhóm chịu trách nhiệm hoàn toàn về nội dung đã nộp.
+| Final | Compilation of all sections + Demo + AI Disclosure | ✅ Completed |
 
 ---
 
